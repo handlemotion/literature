@@ -1,0 +1,33 @@
+{
+  "plugins": ["typescript", "import", "react", "nextjs"],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "eslint/no-underscore-dangle": ["warn", { "allow": ["__lit"] }]
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/.next/**",
+    "**/node_modules/**",
+    "**/.turbo/**",
+    "**/pnpm-lock.yaml"
+  ],
+  "overrides": [
+    {
+      "files": ["packages/core/**", "packages/compiler/**", "packages/next/**"],
+      "env": { "node": true, "browser": false }
+    },
+    {
+      "files": ["packages/client/**", "packages/ui/**", "apps/**"],
+      "env": { "browser": true, "node": false }
+    }
+  ]
+}
