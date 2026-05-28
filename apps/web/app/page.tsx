@@ -7,8 +7,8 @@ export default function Home() {
       <main className={styles.main}>
         <h1>Literature</h1>
         <p>
-          Dev-only copywriting for React — select visible UI text in the canvas,
-          edit in place, and apply changes back to source files.
+          Dev-only copywriting for React — select visible UI text in the canvas, edit in place, and
+          apply changes back to source files.
         </p>
         <Button appName="literature" className={styles.secondary}>
           Scaffold ready

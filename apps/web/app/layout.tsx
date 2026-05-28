@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { LiteratureDevtoolsLoader } from "./literature-devtools";
+// oxlint-disable-next-line import/no-unassigned-import -- Next.js global styles
 import "./globals.css";
 
 const geistSans = localFont({
@@ -26,6 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+        <LiteratureDevtoolsLoader />
       </body>
     </html>
   );
