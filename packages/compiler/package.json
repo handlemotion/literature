@@ -1,7 +1,19 @@
 {
-  "name": "@literature/compiler",
+  "name": "@handleui/literature-compiler",
   "version": "0.0.0",
-  "private": true,
+  "description": "Literature Babel plugin and Vite/Turbopack compiler integration",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handleui/literature.git",
+    "directory": "packages/compiler"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "provenance": false
+  },
+  "files": ["dist"],
   "type": "module",
   "exports": {
     ".": {
@@ -11,7 +23,10 @@
     "./babel": {
       "import": "./dist/babel-plugin-literature.js"
     },
-    "./literature-loader.cjs": "./src/literature-loader.cjs"
+    "./literature-loader.cjs": {
+      "require": "./dist/literature-loader.cjs"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "build": "tsup",
@@ -19,11 +34,12 @@
   },
   "dependencies": {
     "@babel/core": "^7.28.0",
-    "@literature/core": "workspace:*",
+    "@babel/preset-typescript": "^7.28.0",
+    "@handleui/literature-core": "workspace:*",
     "unplugin": "^2.3.5"
   },
   "devDependencies": {
-    "@literature/typescript-config": "workspace:*",
+    "@handleui/literature-typescript-config": "workspace:*",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^22.15.3",
     "tsup": "^8.5.0",

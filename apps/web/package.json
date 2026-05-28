@@ -3,24 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "portless": {
+    "name": "literature",
+    "script": "dev:app"
+  },
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "portless",
+    "dev:app": "next dev",
     "build": "next build",
     "start": "next start",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@literature/ui": "workspace:*",
+    "@handleui/literature-ui": "workspace:*",
     "next": "16.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@literature/next": "workspace:*",
-    "@literature/typescript-config": "workspace:*",
+    "@handleui/literature-client": "workspace:*",
+    "@handleui/literature-next": "workspace:*",
+    "@handleui/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "portless": "^0.13.1",
     "typescript": "5.9.2"
   }
 }

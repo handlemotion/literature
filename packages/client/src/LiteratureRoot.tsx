@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { LiteratureManifest, TextTarget } from "@literature/core";
+import type { LiteratureManifest, TextTarget } from "@handleui/literature-core";
 import { patchText, undoPatch } from "./api.js";
 import { Panel } from "./Panel.js";
 import { Pill, type PillMode } from "./Pill.js";

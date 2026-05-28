@@ -1,7 +1,19 @@
 {
-  "name": "@literature/client",
+  "name": "@handleui/literature-client",
   "version": "0.0.0",
-  "private": true,
+  "description": "Literature in-canvas overlay, selection, and runtime markers",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handleui/literature.git",
+    "directory": "packages/client"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "provenance": false
+  },
+  "files": ["dist"],
   "type": "module",
   "exports": {
     ".": {
@@ -18,10 +30,10 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@literature/core": "workspace:*"
+    "@handleui/literature-core": "workspace:*"
   },
   "devDependencies": {
-    "@literature/typescript-config": "workspace:*",
+    "@handleui/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

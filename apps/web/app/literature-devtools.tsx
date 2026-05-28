@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 
 const LiteratureDevtools = dynamic(
-  () => import("@literature/next/devtools").then((mod) => mod.LiteratureDevtools),
+  () => import("@handleui/literature-next/devtools").then((mod) => mod.LiteratureDevtools),
   { ssr: false },
 );
 

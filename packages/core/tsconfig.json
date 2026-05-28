@@ -1,5 +1,5 @@
 {
-  "extends": "@literature/typescript-config/base.json",
+  "extends": "@handleui/literature-typescript-config/base.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"

@@ -1,7 +1,19 @@
 {
-  "name": "@literature/next",
+  "name": "@handleui/literature-next",
   "version": "0.0.0",
-  "private": true,
+  "description": "Literature dev-only copywriting for Next.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handleui/literature.git",
+    "directory": "packages/next"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "provenance": false
+  },
+  "files": ["dist"],
   "type": "module",
   "exports": {
     ".": {
@@ -18,12 +30,12 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@literature/client": "workspace:*",
-    "@literature/compiler": "workspace:*",
-    "@literature/core": "workspace:*"
+    "@handleui/literature-client": "workspace:*",
+    "@handleui/literature-compiler": "workspace:*",
+    "@handleui/literature-core": "workspace:*"
   },
   "devDependencies": {
-    "@literature/typescript-config": "workspace:*",
+    "@handleui/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "next": "16.2.0",
     "tsup": "^8.5.0",

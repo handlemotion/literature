@@ -1,7 +1,6 @@
-import { transformSync, type TransformOptions } from "@babel/core";
 import path from "node:path";
 import { createUnplugin } from "unplugin";
-import literatureBabelPlugin from "./babel-plugin-literature.js";
+import { transformLiteratureSource } from "./babel-transform.js";
 import { MANIFEST_MODULE, MANIFEST_RESOLVED } from "./constants.js";
 import { getManifestSnapshot, mergeTargets, resetManifestState } from "./manifest-state.js";
 
@@ -9,10 +8,18 @@ function isTransformable(id: string): boolean {
   return /\.(tsx|jsx)$/.test(id) && !id.includes("node_modules");
 }
 
+function isUnderDir(file: string, root: string): boolean {
+  const rel = path.relative(root, file);
+  return Boolean(rel) && !rel.startsWith("..") && !path.isAbsolute(rel);
+}
+
 export const createLiteraturePlugin = createUnplugin<{
   projectRoot?: string;
+  /** Only transform sources under this directory (defaults to projectRoot). */
+  appRoot?: string;
 }>((options) => {
   const isDev = process.env.NODE_ENV === "development";
+  const appRoot = path.resolve(options.appRoot ?? options.projectRoot ?? process.cwd());
 
   return {
     name: "literature",
@@ -31,7 +38,7 @@ export const createLiteraturePlugin = createUnplugin<{
       return null;
     },
     transformInclude(id) {
-      return isTransformable(id);
+      return isTransformable(id) && isUnderDir(id, appRoot);
     },
     transform(code, id) {
       const relFile = relativize(id, options.projectRoot ?? process.cwd());
@@ -39,25 +46,11 @@ export const createLiteraturePlugin = createUnplugin<{
         return null;
       }
 
-      if (!isDev) {
-        const result = transformSync(code, babelOptions(relFile, id, true));
-        if (!result?.code) return null;
-        return { code: result.code, map: result.map ?? undefined };
-      }
-
-      const result = transformSync(code, {
-        ...babelOptions(relFile, id, false),
-        plugins: [
-          [
-            literatureBabelPlugin,
-            {
-              filename: relFile,
-              onTargets: (targets: Record<string, import("@literature/core").TextTarget>) => {
-                mergeTargets(targets);
-              },
-            },
-          ],
-        ],
+      const result = transformLiteratureSource(code, {
+        relFile,
+        absFilename: id,
+        strip: !isDev,
+        onTargets: isDev ? mergeTargets : undefined,
       });
 
       if (!result?.code) return null;
@@ -73,16 +66,6 @@ function relativize(id: string, root: string): string | null {
     return null;
   }
   return path.relative(resolvedRoot, resolvedId).replace(/\\/g, "/");
-}
-
-function babelOptions(relFile: string, absId: string, strip: boolean): TransformOptions {
-  return {
-    filename: absId,
-    sourceMaps: true,
-    babelrc: false,
-    configFile: false,
-    plugins: [[literatureBabelPlugin, { filename: relFile, strip }]],
-  };
 }
 
 export function getManifest() {

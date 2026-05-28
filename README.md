@@ -10,23 +10,23 @@ Dev-only copywriting for React — select visible UI text in the canvas, edit in
 
 ### Packages
 
-- `@literature/core` — targets, recast patch, JSONL history
-- `@literature/compiler` — Babel plugin + unplugin / Turbopack loader
-- `@literature/client` — overlay UI, selection, `__lit` runtime marker
-- `@literature/next` — `withLiterature()` Next.js integration
-- `@literature/ui` — dogfood UI components (optional)
+- `@handleui/literature-core` — targets, recast patch, JSONL history
+- `@handleui/literature-compiler` — Babel plugin + unplugin / Turbopack loader
+- `@handleui/literature-client` — overlay UI, selection, `__lit` runtime marker
+- `@handleui/literature-next` — `withLiterature()` Next.js integration
+- `@handleui/literature-ui` — dogfood UI components (optional)
 
 Lint/format: **oxlint** + **oxfmt** at the repo root (no ESLint).
 
 ## Install (consumer app)
 
 ```sh
-pnpm add -D @literature/next
+pnpm add -D @handleui/literature-next
 ```
 
 ```js
 // next.config.js
-import { withLiterature } from "@literature/next";
+import { withLiterature } from "@handleui/literature-next";
 
 export default withLiterature(
   {
@@ -44,7 +44,7 @@ Patch requests are proxied at `/__literature/*` (no patch server URL in the clie
 import dynamic from "next/dynamic";
 
 const LiteratureDevtools = dynamic(
-  () => import("@literature/next/devtools").then((m) => m.LiteratureDevtools),
+  () => import("@handleui/literature-next/devtools").then((m) => m.LiteratureDevtools),
   { ssr: false },
 );
 
@@ -68,14 +68,14 @@ export default function RootLayout({ children }) {
 }
 ```
 
-For Vite, use `createLiteraturePlugin.vite({ projectRoot })` from `@literature/compiler`.
+For Vite, use `createLiteraturePlugin.vite({ projectRoot })` from `@handleui/literature-compiler`.
 
 ## Develop
 
 ```sh
 pnpm install
 pnpm build
-pnpm dev
+pnpm dev           # https://literature.localhost
 pnpm lint          # oxlint
 pnpm format:fix    # oxfmt
 ```
@@ -96,5 +96,9 @@ Gitignored per project:
 
 ## Remove
 
-1. Remove `@literature/next` and `LiteratureDevtools` from the app
+1. Remove `@handleui/literature-next` and `LiteratureDevtools` from the app
 2. Delete `.literature/` if present
+
+## Publish
+
+Packages ship on npm under **`@handleui/literature-*`** (repo: [handleui/literature](https://github.com/handleui/literature)). CI uses OIDC trusted publishing. See [docs/PUBLISHING.md](docs/PUBLISHING.md).
