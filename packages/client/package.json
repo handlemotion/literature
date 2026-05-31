@@ -30,7 +30,8 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@handleui/literature-core": "workspace:*"
+    "@handleui/literature-core": "workspace:*",
+    "lucide-react": "^0.547.0"
   },
   "devDependencies": {
     "@handleui/literature-typescript-config": "workspace:*",

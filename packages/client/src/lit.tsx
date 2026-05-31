@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export function __lit(id: string, text: string): ReactNode {
   return (
-    <span data-literature-target={id} style={{ display: "contents" }}>
+    <span data-literature-target={id} style={{ display: "inline" }}>
       {text}
     </span>
   );

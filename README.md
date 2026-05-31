@@ -1,6 +1,6 @@
 # Literature
 
-Dev-only copywriting for React — select visible UI text in the canvas, edit in place, and apply changes back to source files.
+Dev-only copywriting for React — enter edit mode to highlight instrumented copy on the canvas, click a string to edit, and apply changes back to source files.
 
 ## What's inside
 
@@ -80,7 +80,7 @@ pnpm lint          # oxlint
 pnpm format:fix    # oxfmt
 ```
 
-Toggle selection: **Alt+Shift+L** or the Literature pill (bottom-right).
+Toggle edit mode: **Alt+Shift+L** or the black pencil pill (bottom-right). In edit mode, all instrumented copy is outlined in blue — click a string to edit it in the panel, then Apply to write back to source.
 
 ## Local artifacts
 

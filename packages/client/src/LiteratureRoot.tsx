@@ -4,22 +4,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { LiteratureManifest, TextTarget } from "@handleui/literature-core";
 import { patchText, undoPatch } from "./api.js";
+import { enableEditMode, setLiteratureActiveTarget } from "./editMode.js";
 import { Panel } from "./Panel.js";
 import { Pill, type PillMode } from "./Pill.js";
-import { startTextSelection } from "./selection.js";
-
-const STORAGE_KEY = "literature-pill-position";
-
-function loadPosition(): { x: number; y: number } {
-  if (typeof window === "undefined") return { x: 24, y: 24 };
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as { x: number; y: number };
-  } catch {
-    /* ignore */
-  }
-  return { x: 24, y: 24 };
-}
 
 export function LiteratureRoot() {
   const [mounted, setMounted] = useState(false);
@@ -30,14 +17,7 @@ export function LiteratureRoot() {
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [manifest, setManifest] = useState<LiteratureManifest | null>(null);
-  const [pos, setPos] = useState(loadPosition);
-  const stopSelectionRef = useRef<(() => void) | null>(null);
-  const dragRef = useRef<{
-    startX: number;
-    startY: number;
-    originX: number;
-    originY: number;
-  } | null>(null);
+  const stopEditModeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -46,19 +26,18 @@ export function LiteratureRoot() {
       .catch(() => setManifest({ version: 1, targets: {} }));
   }, []);
 
-  const stopSelection = useCallback(() => {
-    stopSelectionRef.current?.();
-    stopSelectionRef.current = null;
-    setMode((m) => (m === "select" ? "off" : m));
+  const stopEditMode = useCallback(() => {
+    stopEditModeRef.current?.();
+    stopEditModeRef.current = null;
+    setLiteratureActiveTarget(null);
   }, []);
 
-  const startSelection = useCallback(() => {
-    stopSelectionRef.current?.();
-    setMode("select");
+  const startEditMode = useCallback(() => {
+    stopEditModeRef.current?.();
+    setMode("edit");
     setSelected(null);
     setStatus(null);
-    stopSelectionRef.current = startTextSelection({
-      onHover: () => {},
+    stopEditModeRef.current = enableEditMode({
       onSelect: (targetId) => {
         const target = manifest?.targets[targetId] ?? null;
         if (!target) {
@@ -68,21 +47,25 @@ export function LiteratureRoot() {
         setSelected(target);
         setDraft(target.literal);
         setMode("editing");
-        stopSelectionRef.current?.();
-        stopSelectionRef.current = null;
+        setLiteratureActiveTarget(targetId);
       },
     });
   }, [manifest]);
 
-  const toggleSelect = useCallback(() => {
-    if (mode === "select" || mode === "editing") {
-      stopSelection();
-      setMode("off");
-      setSelected(null);
+  const exitEditMode = useCallback(() => {
+    stopEditMode();
+    setMode("off");
+    setSelected(null);
+    setStatus(null);
+  }, [stopEditMode]);
+
+  const toggleEdit = useCallback(() => {
+    if (mode === "off") {
+      startEditMode();
     } else {
-      startSelection();
+      exitEditMode();
     }
-  }, [mode, startSelection, stopSelection]);
+  }, [mode, startEditMode, exitEditMode]);
 
   const onApply = useCallback(async () => {
     if (!selected) return;
@@ -96,13 +79,13 @@ export function LiteratureRoot() {
       }
       setSelected({ ...selected, literal: draft });
       setStatus("Saved — HMR should refresh");
-      setMode("off");
+      exitEditMode();
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Patch failed");
     } finally {
       setBusy(false);
     }
-  }, [selected, draft]);
+  }, [selected, draft, exitEditMode]);
 
   const onUndo = useCallback(async () => {
     setBusy(true);
@@ -114,94 +97,73 @@ export function LiteratureRoot() {
         return;
       }
       setStatus("Undone");
-      setSelected(null);
-      setMode("off");
+      exitEditMode();
     } catch (e) {
       setStatus(e instanceof Error ? e.message : "Undo failed");
     } finally {
       setBusy(false);
     }
+  }, [exitEditMode]);
+
+  const dismissEditing = useCallback(() => {
+    setSelected(null);
+    setStatus(null);
+    setLiteratureActiveTarget(null);
+    setMode("edit");
   }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.altKey && e.shiftKey && e.key.toLowerCase() === "l") {
         e.preventDefault();
-        toggleSelect();
+        toggleEdit();
+        return;
+      }
+      if (e.key === "Escape" && mode === "editing") {
+        e.preventDefault();
+        dismissEditing();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [toggleSelect]);
+  }, [toggleEdit, mode, dismissEditing]);
 
   useEffect(() => {
-    return () => stopSelectionRef.current?.();
+    return () => stopEditModeRef.current?.();
   }, []);
 
   if (!mounted || !visible) return null;
 
-  const label = mode === "off" ? "Off" : mode === "select" ? "Select mode" : "Editing";
+  const editActive = mode === "edit" || mode === "editing";
 
   const root = (
     <div
+      data-literature-chrome
       style={{
         position: "fixed",
-        right: `${pos.x}px`,
-        bottom: `${pos.y}px`,
+        right: "24px",
+        bottom: "24px",
         zIndex: 2147483647,
         fontFamily: "system-ui, sans-serif",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        gap: "8px",
       }}
     >
-      <div
-        onPointerDown={(e) => {
-          if ((e.target as HTMLElement).closest("button, textarea")) return;
-          dragRef.current = {
-            startX: e.clientX,
-            startY: e.clientY,
-            originX: pos.x,
-            originY: pos.y,
-          };
-        }}
-        onPointerMove={(e) => {
-          if (!dragRef.current) return;
-          const dx = dragRef.current.startX - e.clientX;
-          const dy = dragRef.current.startY - e.clientY;
-          const next = {
-            x: Math.max(8, dragRef.current.originX + dx),
-            y: Math.max(8, dragRef.current.originY + dy),
-          };
-          setPos(next);
-        }}
-        onPointerUp={() => {
-          if (dragRef.current) {
-            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(pos));
-          }
-          dragRef.current = null;
-        }}
-        style={{ cursor: "grab" }}
-      >
-        <Pill
-          mode={mode}
-          label={label}
-          onToggleSelect={toggleSelect}
-          onClose={() => {
-            stopSelection();
-            setVisible(false);
-          }}
+      {mode === "editing" && selected ? (
+        <Panel
+          filePath={selected.filePath}
+          snippet={selected.literal}
+          draft={draft}
+          busy={busy}
+          status={status}
+          onDraftChange={setDraft}
+          onApply={() => void onApply()}
+          onUndo={() => void onUndo()}
         />
-        {mode === "editing" && selected ? (
-          <Panel
-            filePath={selected.filePath}
-            snippet={selected.literal}
-            draft={draft}
-            busy={busy}
-            status={status}
-            onDraftChange={setDraft}
-            onApply={() => void onApply()}
-            onUndo={() => void onUndo()}
-          />
-        ) : null}
-      </div>
+      ) : null}
+      <Pill active={editActive} onToggle={toggleEdit} />
     </div>
   );
 

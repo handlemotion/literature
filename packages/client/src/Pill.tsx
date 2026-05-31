@@ -1,68 +1,40 @@
 import type { CSSProperties } from "react";
+import { PencilLine } from "lucide-react";
 
-export type PillMode = "off" | "select" | "editing";
+export type PillMode = "off" | "edit" | "editing";
 
 interface PillProps {
-  mode: PillMode;
-  label: string;
-  onToggleSelect: () => void;
-  onClose: () => void;
+  active: boolean;
+  onToggle: () => void;
 }
 
-export function Pill({ mode, label, onToggleSelect, onClose }: PillProps) {
-  const modeColor = mode === "select" ? "#6366f1" : mode === "editing" ? "#22c55e" : "#64748b";
-
+export function Pill({ active, onToggle }: PillProps) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        padding: "8px 12px",
-        borderRadius: "999px",
-        background: "rgba(15, 23, 42, 0.92)",
-        color: "#f8fafc",
-        fontFamily: "system-ui, sans-serif",
-        fontSize: "13px",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        userSelect: "none",
-      }}
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={active ? "Exit edit mode" : "Edit copy"}
+      title={active ? "Exit edit mode" : "Edit copy"}
+      style={pillStyle(active)}
     >
-      <span
-        style={{
-          width: "8px",
-          height: "8px",
-          borderRadius: "50%",
-          background: modeColor,
-          flexShrink: 0,
-        }}
-      />
-      <span style={{ fontWeight: 600 }}>Literature</span>
-      <span style={{ opacity: 0.75 }}>{label}</span>
-      <button
-        type="button"
-        onClick={onToggleSelect}
-        style={pillButtonStyle(mode === "select" || mode === "editing")}
-      >
-        {mode === "off" ? "Select" : "Stop"}
-      </button>
-      <button type="button" onClick={onClose} style={pillButtonStyle(false)}>
-        ×
-      </button>
-    </div>
+      <PencilLine size={22} strokeWidth={2} color="#fff" aria-hidden />
+    </button>
   );
 }
 
-function pillButtonStyle(active: boolean): CSSProperties {
+function pillStyle(active: boolean): CSSProperties {
   return {
-    border: "none",
-    borderRadius: "6px",
-    padding: "4px 8px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "48px",
+    height: "48px",
+    padding: 0,
+    borderRadius: "9999px",
+    border: active ? "2px solid rgba(255,255,255,0.85)" : "2px solid transparent",
+    background: "#0a0a0a",
     cursor: "pointer",
-    fontSize: "12px",
-    fontWeight: 600,
-    background: active ? "#6366f1" : "rgba(255,255,255,0.1)",
-    color: "#f8fafc",
+    boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+    userSelect: "none",
   };
 }
