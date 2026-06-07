@@ -46,7 +46,7 @@ export function applyPatch(options: ApplyPatchOptions): PatchResult {
     };
   }
 
-  const ast = parseSource(source);
+  const ast = parseSource(source, target.filePath);
   let node = findNodeForTarget(ast, target);
   if (!node) {
     node = findByLiteralFallback(ast, target);

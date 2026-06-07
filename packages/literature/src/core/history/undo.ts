@@ -47,7 +47,7 @@ export function undoPatch(options: UndoOptions): PatchResult {
       message: `File not found: ${entry.filePath}`,
     };
   }
-  const ast = parseSource(source);
+  const ast = parseSource(source, entry.filePath);
 
   const pseudoTarget = {
     id: entry.targetId,

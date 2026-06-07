@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { LiteratureManifest, TextTarget } from "../core/index.js";
-import { patchText, undoPatch } from "./api.js";
+import { fetchManifest, patchText, undoPatch } from "./api.js";
 import { enableEditMode, setLiteratureActiveTarget } from "./editMode.js";
 import { Panel } from "./Panel.js";
 import { Pill, type PillMode } from "./Pill.js";
+import { isLiteratureEditShortcut } from "./shortcut.js";
 
 export function LiteratureChrome() {
   const [mounted, setMounted] = useState(false);
@@ -15,14 +16,14 @@ export function LiteratureChrome() {
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
-  const [manifest, setManifest] = useState<LiteratureManifest | null>(null);
+  const manifestRef = useRef<LiteratureManifest>({ version: 1, targets: {} });
   const stopEditModeRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     setMounted(true);
-    void import("virtual:literature-manifest")
-      .then((m) => setManifest(m.default as LiteratureManifest))
-      .catch(() => setManifest({ version: 1, targets: {} }));
+    void fetchManifest().then((nextManifest) => {
+      manifestRef.current = nextManifest;
+    });
   }, []);
 
   const stopEditMode = useCallback(() => {
@@ -36,9 +37,12 @@ export function LiteratureChrome() {
     setMode("edit");
     setSelected(null);
     setStatus(null);
+    void fetchManifest().then((nextManifest) => {
+      manifestRef.current = nextManifest;
+    });
     stopEditModeRef.current = enableEditMode({
       onSelect: (targetId) => {
-        const target = manifest?.targets[targetId] ?? null;
+        const target = manifestRef.current.targets[targetId] ?? null;
         if (!target) {
           setStatus("Target not in manifest");
           return;
@@ -49,7 +53,7 @@ export function LiteratureChrome() {
         setLiteratureActiveTarget(targetId);
       },
     });
-  }, [manifest]);
+  }, []);
 
   const exitEditMode = useCallback(() => {
     stopEditMode();
@@ -113,7 +117,7 @@ export function LiteratureChrome() {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.altKey && e.shiftKey && e.key.toLowerCase() === "l") {
+      if (isLiteratureEditShortcut(e)) {
         e.preventDefault();
         toggleEdit();
         return;
@@ -123,8 +127,8 @@ export function LiteratureChrome() {
         dismissEditing();
       }
     };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [toggleEdit, mode, dismissEditing]);
 
   useEffect(() => {

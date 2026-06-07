@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { applyPatch, readHistory, undoPatch, type LiteratureManifest } from "../../core/index.js";
 import { getManifest } from "../../compiler/index.js";
+import { mergeTargets, readManifestFromDisk } from "../../compiler/manifest-state.js";
 
 export interface ServerContext {
   projectRoot: string;
@@ -74,8 +75,12 @@ async function parseJsonBody<T>(req: IncomingMessage, res: ServerResponse): Prom
   }
 }
 
-function getManifestSnapshot(): LiteratureManifest {
-  return getManifest();
+function resolveManifest(projectRoot: string): LiteratureManifest {
+  const inMemory = getManifest();
+  if (Object.keys(inMemory.targets).length > 0) {
+    return inMemory;
+  }
+  return readManifestFromDisk(projectRoot) ?? inMemory;
 }
 
 export async function handleRequest(
@@ -94,6 +99,23 @@ export async function handleRequest(
 
     if (method === "GET" && url.pathname === "/health") {
       sendJson(res, 200, { ok: true, version: "0.0.0", token: readToken(ctx.tokenPath) });
+      return;
+    }
+
+    if (method === "GET" && url.pathname === "/manifest") {
+      sendJson(res, 200, resolveManifest(ctx.projectRoot));
+      return;
+    }
+
+    if (method === "POST" && url.pathname === "/manifest/register") {
+      const body = await parseJsonBody<{ targets?: LiteratureManifest["targets"] }>(req, res);
+      if (!body) {
+        return;
+      }
+      if (body.targets) {
+        mergeTargets(body.targets);
+      }
+      sendJson(res, 200, { ok: true });
       return;
     }
 
@@ -123,7 +145,7 @@ export async function handleRequest(
       }
       const result = applyPatch({
         projectRoot: ctx.projectRoot,
-        manifest: getManifestSnapshot(),
+        manifest: resolveManifest(ctx.projectRoot),
         targetId: body.targetId,
         nextText: body.nextText,
         historyPath: ctx.historyPath,

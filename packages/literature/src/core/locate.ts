@@ -1,9 +1,11 @@
 import * as recast from "recast";
-
-type AstNode = recast.types.namedTypes.Node;
+import babelParser from "recast/parsers/babel.js";
+import babelTsParser from "recast/parsers/babel-ts.js";
 import tsParser from "recast/parsers/typescript.js";
 import type { SourceRange, TextTarget, TextTargetKind } from "./types.js";
 import { literalHash, normalizeLiteral } from "./hash.js";
+
+type AstNode = recast.types.namedTypes.Node;
 
 function rangeFromLoc(
   loc:
@@ -105,6 +107,13 @@ export function findByLiteralFallback(
   return null;
 }
 
-export function parseSource(source: string): recast.types.namedTypes.File {
-  return recast.parse(source, { parser: tsParser }) as recast.types.namedTypes.File;
+function pickParser(filePath?: string) {
+  if (filePath?.endsWith(".tsx")) return babelTsParser;
+  if (filePath?.endsWith(".jsx")) return babelParser;
+  if (filePath?.endsWith(".ts")) return tsParser;
+  return babelTsParser;
+}
+
+export function parseSource(source: string, filePath?: string): recast.types.namedTypes.File {
+  return recast.parse(source, { parser: pickParser(filePath) }) as recast.types.namedTypes.File;
 }

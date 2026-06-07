@@ -65,10 +65,19 @@ export function withLiterature(
     (nextConfig.turbopack as { root?: string } | undefined)?.root ?? projectRoot,
   );
   const appPrefix = path.relative(turbopackRoot, appRoot).replace(/\\/g, "/");
-  const scopedGlob = (ext: string) => (appPrefix ? `${appPrefix}/` : "") + `**/*.${ext}`;
+  const scopedGlob = (ext: string) =>
+    turbopackRoot !== appRoot && appPrefix ? `${appPrefix}/**/*.${ext}` : `**/*.${ext}`;
+  const literatureGlobs = (ext: string) => {
+    const primary = scopedGlob(ext);
+    // Monorepo layouts differ between turbopack root and the Next app dir — register both.
+    if (primary !== `**/*.${ext}`) {
+      return [primary, `**/*.${ext}`];
+    }
+    return [primary];
+  };
   const literatureLoaderRule = {
-    loaders: [{ loader: loaderPath, options: { appRoot } }],
-    as: "*.js",
+    loaders: [{ loader: loaderPath, options: { appRoot, projectRoot: turbopackRoot } }],
+    as: "*.tsx",
   };
 
   return {
@@ -102,8 +111,12 @@ export function withLiterature(
         ? {
             rules: {
               ...(nextConfig.turbopack as { rules?: Record<string, unknown> })?.rules,
-              [scopedGlob("tsx")]: literatureLoaderRule,
-              [scopedGlob("jsx")]: literatureLoaderRule,
+              ...Object.fromEntries(
+                [...literatureGlobs("tsx"), ...literatureGlobs("jsx")].map((glob) => [
+                  glob,
+                  literatureLoaderRule,
+                ]),
+              ),
             },
           }
         : {}),

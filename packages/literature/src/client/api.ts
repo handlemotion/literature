@@ -1,4 +1,4 @@
-import type { PatchResult } from "../core/index.js";
+import type { LiteratureManifest, PatchResult } from "../core/index.js";
 
 const API_PREFIX = "/__literature";
 const TOKEN_HEADER = "X-Literature-Token";
@@ -39,6 +39,14 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
   }
 
   return data as T;
+}
+
+export async function fetchManifest(): Promise<LiteratureManifest> {
+  const res = await fetch(`${API_PREFIX}/manifest`);
+  if (!res.ok) {
+    return { version: 1, targets: {} };
+  }
+  return (await res.json()) as LiteratureManifest;
 }
 
 export async function patchText(targetId: string, nextText: string): Promise<PatchResult> {

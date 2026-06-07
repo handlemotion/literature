@@ -2,7 +2,8 @@ import path from "node:path";
 import { createUnplugin } from "unplugin";
 import { transformLiteratureSource } from "./babel-transform.js";
 import { MANIFEST_MODULE, MANIFEST_RESOLVED } from "./constants.js";
-import { getManifestSnapshot, mergeTargets, resetManifestState } from "./manifest-state.js";
+import { getManifestSnapshot, mergeTargets, resetManifestState, setManifestProjectRoot } from "./manifest-state.js";
+import { registerManifestTargets } from "./register-manifest.js";
 import { shouldSkipLiteratureTransform } from "./skip.js";
 
 function isTransformable(id: string): boolean {
@@ -21,12 +22,16 @@ export const createLiteraturePlugin = createUnplugin<{
 }>((options) => {
   const isDev = process.env.NODE_ENV === "development";
   const appRoot = path.resolve(options.appRoot ?? options.projectRoot ?? process.cwd());
+  const projectRoot = path.resolve(options.projectRoot ?? appRoot);
 
   return {
     name: "literature",
     enforce: "pre",
     buildStart() {
       resetManifestState();
+      if (isDev) {
+        setManifestProjectRoot(projectRoot);
+      }
     },
     resolveId(id) {
       if (id === MANIFEST_MODULE) return MANIFEST_RESOLVED;
@@ -51,7 +56,12 @@ export const createLiteraturePlugin = createUnplugin<{
         relFile,
         absFilename: id,
         strip: !isDev,
-        onTargets: isDev ? mergeTargets : undefined,
+        onTargets: isDev
+          ? (targets) => {
+              mergeTargets(targets);
+              void registerManifestTargets(projectRoot, targets);
+            }
+          : undefined,
       });
 
       if (!result?.code) return null;
