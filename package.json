@@ -8,9 +8,15 @@
     "lint:fix": "oxlint --fix packages && pnpm --filter demo lint:fix",
     "format": "oxfmt --check packages && pnpm --filter demo format",
     "format:fix": "oxfmt packages && pnpm --filter demo format:fix",
-    "check-types": "turbo run check-types"
+    "check-types": "turbo run check-types",
+    "test": "turbo run test --filter=@handlemotion/literature-cli",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "pnpm turbo build --filter=@handlemotion/literature... --filter=@handlemotion/literature-cli && changeset publish"
   },
   "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.31.0",
     "oxfmt": "^0.36.0",
     "oxlint": "^1.50.0",
     "turbo": "^2.9.16",

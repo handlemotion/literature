@@ -1,1 +1,1 @@
-export { LiteratureDevtools } from "./next/LiteratureDevtools.js";
+export { Literature } from "./next/Literature.js";

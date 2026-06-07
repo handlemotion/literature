@@ -8,7 +8,7 @@ import { enableEditMode, setLiteratureActiveTarget } from "./editMode.js";
 import { Panel } from "./Panel.js";
 import { Pill, type PillMode } from "./Pill.js";
 
-export function LiteratureRoot() {
+export function LiteratureChrome() {
   const [mounted, setMounted] = useState(false);
   const [mode, setMode] = useState<PillMode>("off");
   const [selected, setSelected] = useState<TextTarget | null>(null);

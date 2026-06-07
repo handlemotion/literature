@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { writeFileSync, mkdirSync, existsSync, readFileSync, unlinkSync } from "node:fs";
 import path from "node:path";
@@ -44,14 +45,18 @@ export function startLiteratureServer(projectRoot: string): void {
     return;
   }
 
-  const { historyPath, portFile } = literaturePaths(projectRoot);
+  const { historyPath, portFile, tokenFile } = literaturePaths(projectRoot);
   const literatureDir = path.dirname(historyPath);
   if (!existsSync(literatureDir)) {
     mkdirSync(literatureDir, { recursive: true });
   }
 
+  if (!existsSync(tokenFile)) {
+    writeFileSync(tokenFile, randomBytes(32).toString("hex"), "utf-8");
+  }
+
   const server = createServer((req, res) => {
-    void handleRequest(req, res, { projectRoot, historyPath });
+    void handleRequest(req, res, { projectRoot, historyPath, tokenPath: tokenFile });
   });
 
   server.listen(0, "127.0.0.1", () => {

@@ -13,6 +13,7 @@ const { values, positionals } = parseArgs({
     "package-manager": { type: "string", short: "p" },
     "app-dir": { type: "string" },
     "skip-install": { type: "boolean" },
+    "dry-run": { type: "boolean" },
     cwd: { type: "string", short: "c" },
   },
 });
@@ -24,14 +25,20 @@ Usage:
   literature init [options]
 
 Options:
-  -y, --yes                Non-interactive (default; reserved for future prompts)
-  --force                  Overwrite existing Literature config
+  -y, --yes                Non-interactive (default)
+  --force                  Re-apply Literature config when already wrapped
   -f, --framework <next|vite>  Framework override
   -p, --package-manager <pm>   npm | pnpm | yarn | bun
   --app-dir <path>         App directory in monorepos (relative to cwd)
   --skip-install           Patch files only, skip package install
+  --dry-run                Preview install and patches without making changes
   -c, --cwd <path>         Working directory (default: process.cwd())
   -h, --help               Show help
+
+Examples:
+  literature init --dry-run
+  literature init --dry-run --skip-install
+  literature init --dry-run -f next --app-dir apps/demo
 `);
 }
 
@@ -72,6 +79,7 @@ async function main(): Promise<void> {
       packageManager: pm,
       appDir: values["app-dir"],
       skipInstall: values["skip-install"] ?? false,
+      dryRun: values["dry-run"] ?? false,
     });
   } catch (err) {
     console.error(err instanceof Error ? err.message : String(err));

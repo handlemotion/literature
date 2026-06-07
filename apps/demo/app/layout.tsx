@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { LiteratureDevtoolsLoader } from "./literature-devtools";
+import { Literature } from "@handlemotion/literature/devtools";
 // oxlint-disable-next-line import/no-unassigned-import -- Next.js global styles
 import "./globals.css";
 
@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
-        <LiteratureDevtoolsLoader />
+        <Literature />
       </body>
     </html>
   );

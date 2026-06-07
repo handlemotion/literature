@@ -1,6 +1,7 @@
 import path from "node:path";
 import { transformLiteratureSource } from "./babel-transform.js";
 import { mergeTargets } from "./manifest-state.js";
+import { shouldSkipLiteratureTransform } from "./skip.js";
 
 type LoaderContext = {
   async(): (err: Error | null, code?: string, map?: unknown) => void;
@@ -19,14 +20,7 @@ export default function literatureLoader(this: LoaderContext, source: string): v
   const filename = this.resourcePath;
   const { appRoot = process.cwd() } = this.getOptions?.() ?? {};
 
-  const base = path.basename(filename);
-  if (
-    filename.includes("node_modules") ||
-    !isUnderDir(filename, path.resolve(appRoot)) ||
-    base === "layout.tsx" ||
-    base === "layout.jsx" ||
-    base.includes("literature-devtools")
-  ) {
+  if (shouldSkipLiteratureTransform(filename) || !isUnderDir(filename, path.resolve(appRoot))) {
     callback(null, source);
     return;
   }

@@ -8,15 +8,16 @@ Dev-only copywriting for React — enter edit mode to highlight instrumented cop
 npx @handlemotion/literature-cli init -y
 ```
 
-Start your dev server, then press **Alt+Shift+L** (or the pencil pill) to toggle edit mode.
+In a turborepo, run from the repo root — the CLI auto-detects apps under `apps/*` and `packages/*`. Start your dev server, then press **Alt+Shift+L** (or the pencil pill) to toggle edit mode.
 
 ### CLI options
 
 ```sh
 npx @handlemotion/literature-cli init -y -f next              # Next.js override
-npx @handlemotion/literature-cli init -y -f vite              # Vite override
+npx @handlemotion/literature-cli init -y -f vite               # Vite override
 npx @handlemotion/literature-cli init -y -p pnpm              # package manager override
-npx @handlemotion/literature-cli init -y --app-dir apps/demo   # turborepo app package
+npx @handlemotion/literature-cli init -y --app-dir apps/demo   # pick a specific app
+npx @handlemotion/literature-cli init --dry-run                # preview changes only
 ```
 
 ## Manual install (Next.js)
@@ -36,24 +37,26 @@ export default withLiterature(
 ```
 
 ```tsx
-// app/literature-devtools.tsx — see CLI output for the full file
-"use client";
-import dynamic from "next/dynamic";
+// app/layout.tsx
+import { Literature } from "@handlemotion/literature/devtools";
 
-const LiteratureDevtools = dynamic(
-  () => import("@handlemotion/literature/devtools").then((m) => m.LiteratureDevtools),
-  { ssr: false },
-);
-
-export function LiteratureDevtoolsLoader() {
-  if (process.env.NODE_ENV !== "development") return null;
-  return <LiteratureDevtools />;
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        <Literature />
+      </body>
+    </html>
+  );
 }
 ```
 
-Add `<LiteratureDevtoolsLoader />` inside `<body>` in `app/layout.tsx`.
-
 For Vite, use `createLiteraturePlugin.vite({ projectRoot })` from `@handlemotion/literature/vite`.
+
+Types for integrators: `@handlemotion/literature/types`.
+
+Compiler-injected copy wrappers use `__lit` from `@handlemotion/literature/lit` (do not import manually).
 
 ## What's inside (monorepo)
 
@@ -79,6 +82,7 @@ Gitignored per project:
 
 - `.literature/history.jsonl` — edit history
 - `.literature/port` — patch server port
+- `.literature/token` — dev-only patch API token
 
 ## Unsupported in v1
 
@@ -88,7 +92,7 @@ Gitignored per project:
 
 ## Remove
 
-1. Remove `@handlemotion/literature` and `LiteratureDevtools` from the app
+1. Remove `@handlemotion/literature` and `<Literature />` from the app
 2. Delete `.literature/` if present
 
 ## Publish

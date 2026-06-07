@@ -3,6 +3,7 @@ import { createUnplugin } from "unplugin";
 import { transformLiteratureSource } from "./babel-transform.js";
 import { MANIFEST_MODULE, MANIFEST_RESOLVED } from "./constants.js";
 import { getManifestSnapshot, mergeTargets, resetManifestState } from "./manifest-state.js";
+import { shouldSkipLiteratureTransform } from "./skip.js";
 
 function isTransformable(id: string): boolean {
   return /\.(tsx|jsx)$/.test(id) && !id.includes("node_modules");
@@ -38,7 +39,7 @@ export const createLiteraturePlugin = createUnplugin<{
       return null;
     },
     transformInclude(id) {
-      return isTransformable(id) && isUnderDir(id, appRoot);
+      return isTransformable(id) && isUnderDir(id, appRoot) && !shouldSkipLiteratureTransform(id);
     },
     transform(code, id) {
       const relFile = relativize(id, options.projectRoot ?? process.cwd());

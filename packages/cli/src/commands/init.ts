@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { detectFramework, type Framework, type FrameworkInfo } from "../detect/framework.js";
+import { resolveAppTarget } from "../detect/apps.js";
 import {
   detectPackageManager,
   installCommand,
@@ -9,15 +9,15 @@ import {
 } from "../detect/package-manager.js";
 import { patchNextProject } from "../patch/next.js";
 import { patchViteProject } from "../patch/vite.js";
-import { resolveWithinRoot } from "../utils/paths.js";
 
 export interface InitOptions {
   cwd: string;
   force: boolean;
-  framework?: Framework;
+  framework?: "next" | "vite";
   packageManager?: PackageManager;
   appDir?: string;
   skipInstall: boolean;
+  dryRun?: boolean;
 }
 
 function hasReactGrab(cwd: string): boolean {
@@ -43,18 +43,9 @@ function runInstall(cwd: string, pm: PackageManager): void {
   }
 }
 
-function resolveAppDir(cwd: string, appDir?: string): string | undefined {
-  if (!appDir) return undefined;
-  const resolved = resolveWithinRoot(cwd, appDir);
-  if (!existsSync(resolved)) {
-    throw new Error(`App directory does not exist: ${resolved}`);
-  }
-  return resolved;
-}
-
-function withAppDir(info: FrameworkInfo, appDir?: string): FrameworkInfo {
-  if (!appDir) return info;
-  return { ...info, appDir, isMonorepo: true };
+function printInstallPlan(installCwd: string, pm: PackageManager): void {
+  const [bin, ...args] = installCommand(pm);
+  console.log(`Would install in ${installCwd}:\n  ${[bin, ...args].join(" ")}`);
 }
 
 export async function runInit(options: InitOptions): Promise<void> {
@@ -64,48 +55,67 @@ export async function runInit(options: InitOptions): Promise<void> {
     throw new Error("No package.json found. Run this command from your project root.");
   }
 
-  const appDir = resolveAppDir(cwd, options.appDir);
-  const detected =
-    detectFramework(appDir ?? cwd, options.framework, cwd) ??
-    detectFramework(cwd, options.framework, cwd);
-  if (!detected) {
-    throw new Error(
-      "Could not detect Next.js or Vite. Use --framework next|vite or run from your project root.",
-    );
-  }
+  const target = await resolveAppTarget(cwd, {
+    appDir: options.appDir,
+    framework: options.framework,
+  });
 
-  const info = withAppDir(detected, appDir);
-
-  if (hasReactGrab(cwd)) {
+  if (hasReactGrab(target.installCwd)) {
     console.warn(
       "Warning: react-grab detected. Literature and React Grab share a shortcut — do not run both on Alt+Shift+L.",
     );
   }
 
   const pm = options.packageManager ?? detectPackageManager(cwd);
+  const patchOpts = { force: options.force, dryRun: options.dryRun, root: cwd };
+  const shouldPreviewInstall = options.dryRun && !options.skipInstall;
+  const shouldRunInstall = !options.dryRun && !options.skipInstall;
 
-  if (!options.skipInstall) {
-    console.log(`Installing @handlemotion/literature with ${pm}...`);
-    runInstall(cwd, pm);
+  if (shouldPreviewInstall) {
+    printInstallPlan(target.installCwd, pm);
+  } else if (shouldRunInstall) {
+    console.log(`Installing @handlemotion/literature with ${pm} in ${target.installCwd}...`);
+    runInstall(target.installCwd, pm);
   }
 
   const patchedFiles =
-    info.framework === "next"
-      ? patchNextProject(cwd, info, { appDir, force: options.force }).files
-      : patchViteProject(cwd, { force: options.force }).files;
+    target.frameworkInfo.framework === "next"
+      ? patchNextProject(cwd, target.frameworkInfo, {
+          appDir: target.relPath,
+          appRoot: target.appRoot,
+          ...patchOpts,
+        }).files
+      : patchViteProject(target.appRoot, patchOpts).files;
 
-  console.log("\nLiterature initialized.");
+  if (options.dryRun) {
+    console.log("\nDry run — no changes made.");
+  } else {
+    console.log("\nLiterature initialized.");
+  }
+
+  const label = options.dryRun ? "Would update:" : "Updated:";
+  const emptyMsg = options.dryRun
+    ? "No files would change (already configured). Use --force to refresh config options."
+    : "No files changed (already configured). Use --force to refresh config options.";
   if (patchedFiles.length > 0) {
-    console.log("Updated:");
+    console.log(label);
     for (const file of patchedFiles) {
       console.log(`  - ${path.relative(cwd, file)}`);
     }
   } else {
-    console.log("No files changed (already configured). Use --force to overwrite.");
+    console.log(emptyMsg);
   }
+
+  const layoutPatched = patchedFiles.some((file) => /layout\.(tsx|jsx)$/.test(file));
+  if (!layoutPatched) {
+    console.log("\nAdd to your root layout:");
+    console.log('  import { Literature } from "@handlemotion/literature/devtools";');
+    console.log("  <Literature />");
+  }
+
   console.log("\nStart your dev server, then press Alt+Shift+L to toggle edit mode.");
 
-  if (info.framework === "vite") {
+  if (target.frameworkInfo.framework === "vite") {
     console.log(
       "\nNote: Vite integration instruments JSX but does not start the patch server. Use Next.js for full file-write support in v1.",
     );

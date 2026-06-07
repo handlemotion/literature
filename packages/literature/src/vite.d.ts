@@ -1,9 +1,7 @@
 import type { UnpluginInstance } from "unplugin";
+import type { LiteratureManifest } from "./types.js";
 
-export type LiteratureManifest = {
-  version: number;
-  targets: Record<string, unknown>;
-};
+export type { LiteratureManifest } from "./types.js";
 
 export declare const createLiteraturePlugin: UnpluginInstance<
   { projectRoot?: string; appRoot?: string },

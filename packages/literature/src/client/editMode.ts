@@ -79,11 +79,3 @@ export function enableEditMode(callbacks: EditModeCallbacks): () => void {
     removeStyles();
   };
 }
-
-/** @deprecated Use `enableEditMode` */
-export function startTextSelection(callbacks: {
-  onHover: (targetId: string | null) => void;
-  onSelect: (targetId: string) => void;
-}): () => void {
-  return enableEditMode({ onSelect: callbacks.onSelect });
-}

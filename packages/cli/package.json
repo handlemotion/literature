@@ -22,12 +22,14 @@
   },
   "scripts": {
     "build": "tsup",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "test": "tsup && tsx --test src/**/*.test.ts"
   },
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^22.15.3",
     "tsup": "^8.5.0",
+    "tsx": "^4.19.0",
     "typescript": "5.9.2"
   },
   "engines": {

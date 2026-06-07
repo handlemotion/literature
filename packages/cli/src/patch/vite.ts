@@ -1,9 +1,11 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { findViteConfigFile } from "../detect/framework.js";
+import { writeTextFile } from "./io.js";
+import type { PatchOptions } from "./types.js";
 
 const PLUGIN_CONFIGURED = /createLiteraturePlugin\.vite\s*\(/;
 
-export function patchViteProject(cwd: string, options: { force: boolean }): { files: string[] } {
+export function patchViteProject(cwd: string, options: PatchOptions): { files: string[] } {
   const configPath = findViteConfigFile(cwd);
   if (!configPath) {
     throw new Error("Could not find vite.config.* in project root.");
@@ -41,8 +43,11 @@ export function patchViteProject(cwd: string, options: { force: boolean }): { fi
     }
   }
 
-  if (changed || options.force) {
-    writeFileSync(configPath, content, "utf-8");
+  if (!changed) {
+    return { files: [] };
+  }
+
+  if (writeTextFile(configPath, content, options)) {
     return { files: [configPath] };
   }
 

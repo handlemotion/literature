@@ -1,4 +1,5 @@
-# Publishes @handlemotion/literature and @handlemotion/literature-cli to npm via OIDC trusted publishing.
+# Versions and publishes @handlemotion/literature and @handlemotion/literature-cli via Changesets.
+# On main: opens a "Version Packages" PR when changesets exist; publishes after that PR merges.
 # Register this workflow on each package at:
 # https://www.npmjs.com/package/<name>/access → Trusted Publisher → GitHub Actions
 #   Organization/user: handlemotion
@@ -8,18 +9,23 @@ name: Publish
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 permissions:
   id-token: write
-  contents: read
+  contents: write
+  pull-requests: write
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: pnpm/action-setup@v4
 
@@ -31,18 +37,13 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build publishable packages
-        run: |
-          pnpm turbo build \
-            --filter=@handlemotion/literature... \
-            --filter=@handlemotion/literature-cli
-
-      - name: Publish to npm (OIDC)
+      - name: Create version PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          version: pnpm version-packages
+          publish: pnpm release
+          title: Version Packages
+          commit: Version Packages
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_CONFIG_PROVENANCE: "false"
-        run: |
-          pnpm publish -r \
-            --filter '@handlemotion/literature' \
-            --filter '@handlemotion/literature-cli' \
-            --access public \
-            --no-git-checks

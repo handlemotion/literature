@@ -14,7 +14,7 @@ const VITE_CONFIG_FILES = [
   "vite.config.cjs",
 ] as const;
 
-function isMonorepoRoot(cwd: string): boolean {
+export function isMonorepoRoot(cwd: string): boolean {
   const workspaceFile = path.join(cwd, "pnpm-workspace.yaml");
   if (existsSync(workspaceFile)) {
     const content = readFileSync(workspaceFile, "utf-8");

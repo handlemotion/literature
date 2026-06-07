@@ -7,7 +7,7 @@ const monorepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "..
 /** @type {import('next').NextConfig} */
 const nextConfig = withLiterature(
   {
-    allowedDevOrigins: ["literature.localhost", "*.literature.localhost"],
+    allowedDevOrigins: ["localhost", "127.0.0.1", "*.localhost", "literature.localhost", "*.literature.localhost"],
     turbopack: {
       root: monorepoRoot,
     },

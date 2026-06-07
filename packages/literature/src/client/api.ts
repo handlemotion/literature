@@ -1,11 +1,31 @@
 import type { PatchResult } from "../core/index.js";
 
 const API_PREFIX = "/__literature";
+const TOKEN_HEADER = "X-Literature-Token";
+
+let cachedToken: string | null = null;
+
+async function getToken(): Promise<string> {
+  if (cachedToken) return cachedToken;
+
+  const res = await fetch(`${API_PREFIX}/health`);
+  if (!res.ok) {
+    throw new Error("Literature patch server unavailable");
+  }
+
+  const data = (await res.json()) as { token?: string };
+  cachedToken = data.token ?? "";
+  return cachedToken;
+}
 
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
+  const token = await getToken();
   const res = await fetch(`${API_PREFIX}${path}`, {
     method,
-    headers: body !== undefined ? { "Content-Type": "application/json" } : undefined,
+    headers: {
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      [TOKEN_HEADER]: token,
+    },
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 

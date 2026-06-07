@@ -14,10 +14,21 @@ export function appendHistory(historyPath: string, entry: HistoryEntry): void {
   appendFileSync(historyPath, `${JSON.stringify(entry)}\n`, "utf-8");
 }
 
+function parseHistoryLine(line: string): HistoryEntry | null {
+  try {
+    return JSON.parse(line) as HistoryEntry;
+  } catch {
+    return null;
+  }
+}
+
 export function readHistory(historyPath: string, limit = 20): HistoryEntry[] {
   if (!existsSync(historyPath)) return [];
   const lines = readFileSync(historyPath, "utf-8").trim().split("\n").filter(Boolean);
-  const entries = lines.map((line) => JSON.parse(line) as HistoryEntry);
+  const entries = lines.flatMap((line) => {
+    const entry = parseHistoryLine(line);
+    return entry ? [entry] : [];
+  });
   return entries.slice(-limit).reverse();
 }
 

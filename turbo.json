@@ -22,6 +22,10 @@
     "format": {},
     "format:fix": {
       "cache": false
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "inputs": ["src/**", "fixtures/**"]
     }
   }
 }
