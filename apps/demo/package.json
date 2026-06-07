@@ -1,17 +1,17 @@
 {
-  "name": "web",
+  "name": "demo",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "portless": {
-    "name": "literature",
-    "script": "dev:app"
-  },
   "scripts": {
     "dev": "portless",
     "dev:app": "next dev",
     "build": "next build",
     "start": "next start",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt .",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
@@ -21,13 +21,18 @@
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@handlemotion/literature-client": "workspace:*",
-    "@handlemotion/literature-next": "workspace:*",
+    "@handlemotion/literature": "workspace:*",
     "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
+    "oxfmt": "^0.36.0",
+    "oxlint": "^1.50.0",
     "portless": "^0.13.1",
     "typescript": "5.9.2"
+  },
+  "portless": {
+    "name": "literature",
+    "script": "dev:app"
   }
 }

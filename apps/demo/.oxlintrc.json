@@ -1,0 +1,15 @@
+{
+  "plugins": ["typescript", "import", "react", "nextjs"],
+  "env": {
+    "browser": true
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+  },
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "pedantic": "off"
+  },
+  "ignorePatterns": ["**/.next/**", "**/node_modules/**"]
+}
