@@ -25,14 +25,14 @@ pnpm install
 pnpm turbo build --filter=web...
 ```
 
-**Note:** Root `pnpm build` fails on `@handleui/literature-vite` (stub package with no source). Use the filtered build above or match CI:
+**Note:** Root `pnpm build` fails on `@handlemotion/literature-vite` (stub package with no source). Use the filtered build above or match CI:
 
 ```sh
 pnpm turbo build \
-  --filter=@handleui/literature-core \
-  --filter=@handleui/literature-compiler \
-  --filter=@handleui/literature-client \
-  --filter=@handleui/literature-next
+  --filter=@handlemotion/literature-core \
+  --filter=@handlemotion/literature-compiler \
+  --filter=@handlemotion/literature-client \
+  --filter=@handlemotion/literature-next
 ```
 
 ### Cloud VM / localhost dev
@@ -42,7 +42,7 @@ When not using portless, run `pnpm --filter web dev:app` on port 3000. If Litera
 ### Lint / types / tests
 
 - **Lint:** `pnpm lint` (oxlint). Known issue: unused `setVisible` in `packages/client/src/LiteratureRoot.tsx`.
-- **Types:** `pnpm check-types` fails on `@handleui/literature-vite` stub (no `tsconfig.json`). Use `pnpm turbo check-types --filter=web...` for the app stack.
+- **Types:** `pnpm check-types` fails on `@handlemotion/literature-vite` stub (no `tsconfig.json`). Use `pnpm turbo check-types --filter=web...` for the app stack.
 - **Tests:** No automated test suite in this repo; verify manually via the dogfood app in dev mode (Alt+Shift+L toggles edit mode).
 
 ### Local artifacts (gitignored)

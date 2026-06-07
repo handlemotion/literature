@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { withLiterature } from "@handleui/literature-next";
+import { withLiterature } from "@handlemotion/literature-next";
 
 const monorepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
 

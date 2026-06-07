@@ -1,5 +1,5 @@
 {
-  "name": "@handleui/literature-core",
+  "name": "@handlemotion/literature-core",
   "version": "0.0.0",
   "description": "Literature targets, recast patch, and JSONL edit history",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "recast": "^0.23.9"
   },
   "devDependencies": {
-    "@handleui/literature-typescript-config": "workspace:*",
+    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "tsup": "^8.5.0",
     "typescript": "5.9.2"

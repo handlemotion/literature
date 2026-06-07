@@ -1,5 +1,5 @@
 {
-  "name": "@handleui/literature-compiler",
+  "name": "@handlemotion/literature-compiler",
   "version": "0.0.0",
   "description": "Literature Babel plugin and Vite/Turbopack compiler integration",
   "license": "MIT",
@@ -35,11 +35,11 @@
   "dependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.28.0",
-    "@handleui/literature-core": "workspace:*",
+    "@handlemotion/literature-core": "workspace:*",
     "unplugin": "^2.3.5"
   },
   "devDependencies": {
-    "@handleui/literature-typescript-config": "workspace:*",
+    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^22.15.3",
     "tsup": "^8.5.0",

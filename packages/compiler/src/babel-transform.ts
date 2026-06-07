@@ -2,7 +2,7 @@ import { createRequire } from "node:module";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { transformSync, type TransformOptions, type TransformResult } from "@babel/core";
-import type { TextTarget } from "@handleui/literature-core";
+import type { TextTarget } from "@handlemotion/literature-core";
 import literatureBabelPlugin from "./babel-plugin-literature.js";
 
 const require = createRequire(

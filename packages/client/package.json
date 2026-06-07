@@ -1,5 +1,5 @@
 {
-  "name": "@handleui/literature-client",
+  "name": "@handlemotion/literature-client",
   "version": "0.0.0",
   "description": "Literature in-canvas overlay, selection, and runtime markers",
   "license": "MIT",
@@ -30,11 +30,11 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@handleui/literature-core": "workspace:*",
+    "@handlemotion/literature-core": "workspace:*",
     "lucide-react": "^0.547.0"
   },
   "devDependencies": {
-    "@handleui/literature-typescript-config": "workspace:*",
+    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

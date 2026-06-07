@@ -1,4 +1,4 @@
-import type { PatchResult } from "@handleui/literature-core";
+import type { PatchResult } from "@handlemotion/literature-core";
 
 const API_PREFIX = "/__literature";
 

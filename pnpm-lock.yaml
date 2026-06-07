@@ -23,7 +23,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@handleui/literature-ui':
+      '@handlemotion/literature-ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
@@ -36,13 +36,13 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@handleui/literature-client':
+      '@handlemotion/literature-client':
         specifier: workspace:*
         version: link:../../packages/client
-      '@handleui/literature-next':
+      '@handlemotion/literature-next':
         specifier: workspace:*
         version: link:../../packages/next
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
@@ -63,14 +63,14 @@ importers:
 
   packages/client:
     dependencies:
-      '@handleui/literature-core':
+      '@handlemotion/literature-core':
         specifier: workspace:*
         version: link:../core
       lucide-react:
         specifier: ^0.547.0
         version: 0.547.0(react@19.2.0)
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -103,14 +103,14 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.28.0
         version: 7.29.7(@babel/core@7.29.7)
-      '@handleui/literature-core':
+      '@handlemotion/literature-core':
         specifier: workspace:*
         version: link:../core
       unplugin:
         specifier: ^2.3.5
         version: 2.3.11
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/babel__core':
@@ -132,7 +132,7 @@ importers:
         specifier: ^0.23.9
         version: 0.23.11
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -147,17 +147,17 @@ importers:
 
   packages/next:
     dependencies:
-      '@handleui/literature-client':
+      '@handlemotion/literature-client':
         specifier: workspace:*
         version: link:../client
-      '@handleui/literature-compiler':
+      '@handlemotion/literature-compiler':
         specifier: workspace:*
         version: link:../compiler
-      '@handleui/literature-core':
+      '@handlemotion/literature-core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -184,7 +184,7 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
@@ -202,11 +202,11 @@ importers:
 
   packages/vite:
     dependencies:
-      '@handleui/literature-compiler':
+      '@handlemotion/literature-compiler':
         specifier: workspace:*
         version: link:../compiler
     devDependencies:
-      '@handleui/literature-typescript-config':
+      '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       tsup:

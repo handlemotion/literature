@@ -1,5 +1,5 @@
 {
-  "extends": "@handleui/literature-typescript-config/react-library.json",
+  "extends": "@handlemotion/literature-typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
     "strictNullChecks": true

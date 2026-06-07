@@ -1,4 +1,4 @@
-import { Button } from "@handleui/literature-ui/button";
+import { Button } from "@handlemotion/literature-ui/button";
 import styles from "./page.module.css";
 
 export default function Home() {

@@ -1,5 +1,5 @@
 {
-  "extends": "@handleui/literature-typescript-config/nextjs.json",
+  "extends": "@handlemotion/literature-typescript-config/nextjs.json",
   "compilerOptions": {
     "plugins": [
       {

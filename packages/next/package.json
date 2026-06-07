@@ -1,5 +1,5 @@
 {
-  "name": "@handleui/literature-next",
+  "name": "@handlemotion/literature-next",
   "version": "0.0.0",
   "description": "Literature dev-only copywriting for Next.js",
   "license": "MIT",
@@ -30,12 +30,12 @@
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
-    "@handleui/literature-client": "workspace:*",
-    "@handleui/literature-compiler": "workspace:*",
-    "@handleui/literature-core": "workspace:*"
+    "@handlemotion/literature-client": "workspace:*",
+    "@handlemotion/literature-compiler": "workspace:*",
+    "@handlemotion/literature-core": "workspace:*"
   },
   "devDependencies": {
-    "@handleui/literature-typescript-config": "workspace:*",
+    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "next": "16.2.0",
     "tsup": "^8.5.0",

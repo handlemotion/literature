@@ -1,6 +1,6 @@
 import path from "node:path";
 import { createRequire } from "node:module";
-import { createLiteraturePlugin } from "@handleui/literature-compiler";
+import { createLiteraturePlugin } from "@handlemotion/literature-compiler";
 import { startLiteratureServer, waitForLiteratureServer } from "./server/start.js";
 
 const require = createRequire(import.meta.url);
@@ -58,7 +58,7 @@ export function withLiterature(
     startLiteratureServer(projectRoot);
   }
 
-  const loaderPath = require.resolve("@handleui/literature-compiler/literature-loader.cjs");
+  const loaderPath = require.resolve("@handlemotion/literature-compiler/literature-loader.cjs");
   const userWebpack = nextConfig.webpack;
   const userRewrites = nextConfig.rewrites;
   const turbopackRoot = path.resolve(

@@ -1,11 +1,11 @@
 # Publishing to npm
 
-Published packages (under the **@handleui** scope):
+Published packages (under the **@handlemotion** scope):
 
-- `@handleui/literature-core`
-- `@handleui/literature-compiler`
-- `@handleui/literature-client`
-- `@handleui/literature-next` — primary install target
+- `@handlemotion/literature-core`
+- `@handlemotion/literature-compiler`
+- `@handlemotion/literature-client`
+- `@handlemotion/literature-next` — primary install target
 
 Publishing uses [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC from GitHub Actions). No `NPM_TOKEN`, no provenance (`publishConfig.provenance: false` and root `.npmrc`).
 
@@ -16,16 +16,16 @@ Trusted publishing only applies to **existing** packages. Publish v0 manually on
 ```sh
 pnpm install
 pnpm turbo build \
-  --filter=@handleui/literature-core \
-  --filter=@handleui/literature-compiler \
-  --filter=@handleui/literature-client \
-  --filter=@handleui/literature-next
+  --filter=@handlemotion/literature-core \
+  --filter=@handlemotion/literature-compiler \
+  --filter=@handlemotion/literature-client \
+  --filter=@handlemotion/literature-next
 
 pnpm publish -r \
-  --filter '@handleui/literature-core' \
-  --filter '@handleui/literature-compiler' \
-  --filter '@handleui/literature-client' \
-  --filter '@handleui/literature-next' \
+  --filter '@handlemotion/literature-core' \
+  --filter '@handlemotion/literature-compiler' \
+  --filter '@handlemotion/literature-client' \
+  --filter '@handlemotion/literature-next' \
   --access public \
   --no-git-checks
 ```
@@ -37,7 +37,7 @@ Or from each package directory: `npm publish --access public` (npm 11.5.1+).
 For **each** package on [npmjs.com](https://www.npmjs.com):
 
 1. Package → **Settings** → **Publishing access** → **Trusted Publisher** → **GitHub Actions**
-2. **Organization or user:** `handleui`
+2. **Organization or user:** `handlemotion`
 3. **Repository:** `literature`
 4. **Workflow filename:** `publish.yml`
 5. **Environment:** leave empty unless you add a GitHub Environment later

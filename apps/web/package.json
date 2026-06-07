@@ -15,15 +15,15 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@handleui/literature-ui": "workspace:*",
+    "@handlemotion/literature-ui": "workspace:*",
     "next": "16.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
-    "@handleui/literature-client": "workspace:*",
-    "@handleui/literature-next": "workspace:*",
-    "@handleui/literature-typescript-config": "workspace:*",
+    "@handlemotion/literature-client": "workspace:*",
+    "@handlemotion/literature-next": "workspace:*",
+    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

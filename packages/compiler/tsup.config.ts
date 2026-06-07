@@ -17,6 +17,6 @@ export default defineConfig([
     dts: false,
     target: "node18",
     splitting: false,
-    external: ["@babel/core", "@babel/preset-typescript", "@handleui/literature-core"],
+    external: ["@babel/core", "@babel/preset-typescript", "@handlemotion/literature-core"],
   },
 ]);
