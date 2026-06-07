@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/handleui/literature.git",
+    "url": "git+https://github.com/handlemotion/literature.git",
     "directory": "packages/literature"
   },
   "files": [
