@@ -1,5 +1,5 @@
-# Publishes @handlemotion/literature-* to npm via OIDC trusted publishing (no NPM_TOKEN).
-# After your first manual `npm publish`, register this workflow on each package at:
+# Publishes @handlemotion/literature and @handlemotion/literature-cli to npm via OIDC trusted publishing.
+# Register this workflow on each package at:
 # https://www.npmjs.com/package/<name>/access → Trusted Publisher → GitHub Actions
 #   Organization/user: handlemotion
 #   Repository: literature
@@ -34,19 +34,15 @@ jobs:
       - name: Build publishable packages
         run: |
           pnpm turbo build \
-            --filter=@handlemotion/literature-core \
-            --filter=@handlemotion/literature-compiler \
-            --filter=@handlemotion/literature-client \
-            --filter=@handlemotion/literature-next
+            --filter=@handlemotion/literature... \
+            --filter=@handlemotion/literature-cli
 
       - name: Publish to npm (OIDC)
         env:
           NPM_CONFIG_PROVENANCE: "false"
         run: |
           pnpm publish -r \
-            --filter '@handlemotion/literature-core' \
-            --filter '@handlemotion/literature-compiler' \
-            --filter '@handlemotion/literature-client' \
-            --filter '@handlemotion/literature-next' \
+            --filter '@handlemotion/literature' \
+            --filter '@handlemotion/literature-cli' \
             --access public \
             --no-git-checks

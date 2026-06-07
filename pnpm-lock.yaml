@@ -21,14 +21,14 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  apps/web:
+  apps/demo:
     dependencies:
       '@handlemotion/literature-ui':
         specifier: workspace:*
         version: link:../../packages/ui
       next:
         specifier: 16.2.0
-        version: 16.2.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 16.2.0(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -36,12 +36,9 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
     devDependencies:
-      '@handlemotion/literature-client':
+      '@handlemotion/literature':
         specifier: workspace:*
-        version: link:../../packages/client
-      '@handlemotion/literature-next':
-        specifier: workspace:*
-        version: link:../../packages/next
+        version: link:../../packages/literature
       '@handlemotion/literature-typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -54,6 +51,12 @@ importers:
       '@types/react-dom':
         specifier: 19.2.2
         version: 19.2.2(@types/react@19.2.2)
+      oxfmt:
+        specifier: ^0.36.0
+        version: 0.36.0
+      oxlint:
+        specifier: ^1.50.0
+        version: 1.67.0
       portless:
         specifier: ^0.13.1
         version: 0.13.1
@@ -61,14 +64,7 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  packages/client:
-    dependencies:
-      '@handlemotion/literature-core':
-        specifier: workspace:*
-        version: link:../core
-      lucide-react:
-        specifier: ^0.547.0
-        version: 0.547.0(react@19.2.0)
+  packages/cli:
     devDependencies:
       '@handlemotion/literature-typescript-config':
         specifier: workspace:*
@@ -76,18 +72,6 @@ importers:
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
-      '@types/react':
-        specifier: 19.2.2
-        version: 19.2.2
-      '@types/react-dom':
-        specifier: 19.2.2
-        version: 19.2.2(@types/react@19.2.2)
-      react:
-        specifier: ^19.2.0
-        version: 19.2.0
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.0(react@19.2.0)
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
@@ -95,7 +79,7 @@ importers:
         specifier: 5.9.2
         version: 5.9.2
 
-  packages/compiler:
+  packages/literature:
     dependencies:
       '@babel/core':
         specifier: ^7.28.0
@@ -103,12 +87,18 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.28.0
         version: 7.29.7(@babel/core@7.29.7)
-      '@handlemotion/literature-core':
-        specifier: workspace:*
-        version: link:../core
+      lucide-react:
+        specifier: ^0.547.0
+        version: 0.547.0(react@19.2.0)
+      recast:
+        specifier: ^0.23.9
+        version: 0.23.11
       unplugin:
         specifier: ^2.3.5
         version: 2.3.11
+      vite:
+        specifier: '>=5'
+        version: 7.3.3(@types/node@22.15.3)
     devDependencies:
       '@handlemotion/literature-typescript-config':
         specifier: workspace:*
@@ -119,53 +109,21 @@ importers:
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
-      typescript:
-        specifier: 5.9.2
-        version: 5.9.2
-
-  packages/core:
-    dependencies:
-      recast:
-        specifier: ^0.23.9
-        version: 0.23.11
-    devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
-      typescript:
-        specifier: 5.9.2
-        version: 5.9.2
-
-  packages/next:
-    dependencies:
-      '@handlemotion/literature-client':
-        specifier: workspace:*
-        version: link:../client
-      '@handlemotion/literature-compiler':
-        specifier: workspace:*
-        version: link:../compiler
-      '@handlemotion/literature-core':
-        specifier: workspace:*
-        version: link:../core
-    devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
+      '@types/react':
+        specifier: 19.2.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: 19.2.2
+        version: 19.2.2(@types/react@19.2.2)
       next:
         specifier: 16.2.0
-        version: 16.2.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        version: 16.2.0(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.0
+      react-dom:
+        specifier: ^19.2.0
+        version: 19.2.0(react@19.2.0)
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
@@ -199,25 +157,6 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
-
-  packages/vite:
-    dependencies:
-      '@handlemotion/literature-compiler':
-        specifier: workspace:*
-        version: link:../compiler
-    devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
-      typescript:
-        specifier: 5.9.2
-        version: 5.9.2
-      vite:
-        specifier: ^7.0.0
-        version: 7.3.3(@types/node@22.15.3)
 
 packages:
 
@@ -1147,11 +1086,6 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
 
-  baseline-browser-mapping@2.10.8:
-    resolution: {integrity: sha512-PCLz/LXGBsNTErbtB6i5u4eLpHeMfi93aUv5duMmj6caNu6IphS4q6UevDnL36sZQv9lrP11dbPKGMaXPwMKfQ==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-
   browserslist@4.28.2:
     resolution: {integrity: sha512-48xSriZYYg+8qXna9kwqjIVzuQxi+KYWp2+5nCYnYKPTr0LvD89Jqk2Or5ogxz0NUMfIjhh2lIUX/LyX9B4oIg==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -1166,9 +1100,6 @@ packages:
   cac@6.7.14:
     resolution: {integrity: sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ==}
     engines: {node: '>=8'}
-
-  caniuse-lite@1.0.30001761:
-    resolution: {integrity: sha512-JF9ptu1vP2coz98+5051jZ4PwQgd2ni8A+gYSN7EA7dPKIMf0pDlSUxhdmVOaV3/fYK5uWBkgSXJaRLr4+3A6g==}
 
   caniuse-lite@1.0.30001793:
     resolution: {integrity: sha512-iwSsYWaCOoh26cV8NwNRViHlrfUvYsHDfRVcbtmw0Kg6PJIZZXwMkj1442FYLBGkeUf1juAsU3DTfxW579mrPA==}
@@ -1295,11 +1226,6 @@ packages:
 
   mz@2.7.0:
     resolution: {integrity: sha512-z81GNO7nnYMEhrGh9LeymoE4+Yr0Wn5McHIZMK5cfQCl+NDX08sCZgUc9/6MHni9IWuFLm1Z3HTCXu2z9fN62Q==}
-
-  nanoid@3.3.11:
-    resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
-    engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
-    hasBin: true
 
   nanoid@3.3.12:
     resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
@@ -2266,8 +2192,6 @@ snapshots:
 
   baseline-browser-mapping@2.10.32: {}
 
-  baseline-browser-mapping@2.10.8: {}
-
   browserslist@4.28.2:
     dependencies:
       baseline-browser-mapping: 2.10.32
@@ -2282,8 +2206,6 @@ snapshots:
       load-tsconfig: 0.2.5
 
   cac@6.7.14: {}
-
-  caniuse-lite@1.0.30001761: {}
 
   caniuse-lite@1.0.30001793: {}
 
@@ -2401,20 +2323,18 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nanoid@3.3.11: {}
-
   nanoid@3.3.12: {}
 
-  next@16.2.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next@16.2.0(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@next/env': 16.2.0
       '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.8
-      caniuse-lite: 1.0.30001761
+      baseline-browser-mapping: 2.10.32
+      caniuse-lite: 1.0.30001793
       postcss: 8.4.31
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
-      styled-jsx: 5.1.6(react@19.2.0)
+      styled-jsx: 5.1.6(@babel/core@7.29.7)(react@19.2.0)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.0
       '@next/swc-darwin-x64': 16.2.0
@@ -2503,7 +2423,7 @@ snapshots:
 
   postcss@8.4.31:
     dependencies:
-      nanoid: 3.3.11
+      nanoid: 3.3.12
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
@@ -2608,10 +2528,12 @@ snapshots:
 
   source-map@0.7.6: {}
 
-  styled-jsx@5.1.6(react@19.2.0):
+  styled-jsx@5.1.6(@babel/core@7.29.7)(react@19.2.0):
     dependencies:
       client-only: 0.0.1
       react: 19.2.0
+    optionalDependencies:
+      '@babel/core': 7.29.7
 
   sucrase@3.35.1:
     dependencies:
