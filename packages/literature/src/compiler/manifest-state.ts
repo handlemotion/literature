@@ -1,4 +1,4 @@
-import type { LiteratureManifest } from "@handlemotion/literature-core";
+import type { LiteratureManifest } from "../core/index.js";
 
 export const manifest: LiteratureManifest = { version: 1, targets: {} };
 

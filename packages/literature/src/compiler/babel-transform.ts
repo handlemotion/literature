@@ -1,16 +1,6 @@
-import { createRequire } from "node:module";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { transformSync, type TransformOptions, type TransformResult } from "@babel/core";
-import type { TextTarget } from "@handlemotion/literature-core";
+import { transformSync, type BabelFileResult, type TransformOptions } from "@babel/core";
+import type { TextTarget } from "../core/index.js";
 import literatureBabelPlugin from "./babel-plugin-literature.js";
-
-const require = createRequire(
-  typeof __dirname !== "undefined"
-    ? path.join(__dirname, "literature-loader.cjs")
-    : fileURLToPath(import.meta.url),
-);
-const typescriptPreset = require.resolve("@babel/preset-typescript");
 
 export type LiteratureTransformOptions = {
   relFile: string;
@@ -43,11 +33,9 @@ export function literatureBabelTransformOptions({
     plugins: [[literatureBabelPlugin, pluginOptions]],
     ...(isTs
       ? {
-          // Plugins run before presets: literature rewrites JSX text, then TS is lowered to JS
-          // (required when Turbopack/webpack loaders emit `as: "*.js"`).
           presets: [
             [
-              typescriptPreset,
+              "@babel/preset-typescript",
               {
                 isTSX: isTsx,
                 allExtensions: isTsx,
@@ -65,6 +53,6 @@ export function literatureBabelTransformOptions({
 export function transformLiteratureSource(
   code: string,
   options: LiteratureTransformOptions,
-): TransformResult | null {
+): BabelFileResult | null {
   return transformSync(code, literatureBabelTransformOptions(options));
 }

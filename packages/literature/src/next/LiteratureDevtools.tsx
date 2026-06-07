@@ -1,6 +1,6 @@
 "use client";
 
-import { LiteratureRoot } from "@handlemotion/literature-client";
+import { LiteratureRoot } from "../client/index.js";
 
 export function LiteratureDevtools() {
   if (process.env.NODE_ENV !== "development") {

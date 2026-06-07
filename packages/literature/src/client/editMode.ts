@@ -39,9 +39,7 @@ function clearActiveTargets(): void {
 export function setLiteratureActiveTarget(targetId: string | null): void {
   clearActiveTargets();
   if (!targetId) return;
-  const el = document.querySelector(
-    `[data-literature-target="${CSS.escape(targetId)}"]`,
-  );
+  const el = document.querySelector(`[data-literature-target="${CSS.escape(targetId)}"]`);
   el?.setAttribute("data-literature-active", "");
 }
 

@@ -1,8 +1,7 @@
 import type { PluginObj } from "@babel/core";
 import { types as t } from "@babel/core";
-import { buildTextTarget } from "@handlemotion/literature-core";
-import type { TextTarget } from "@handlemotion/literature-core";
-import { STRING_PROP_ALLOWLIST } from "./constants.js";
+import { buildTextTarget, type TextTarget } from "../core/index.js";
+import { LIT_IMPORT_SOURCE, STRING_PROP_ALLOWLIST } from "./constants.js";
 
 export interface LiteratureBabelState {
   targets: Record<string, TextTarget>;
@@ -69,12 +68,12 @@ export default function literatureBabelPlugin(
         exit(programPath) {
           if (!state.needsLitImport || options.strip) return;
           const hasImport = programPath.node.body.some(
-            (n) => t.isImportDeclaration(n) && n.source.value === "@handlemotion/literature-client/lit",
+            (n) => t.isImportDeclaration(n) && n.source.value === LIT_IMPORT_SOURCE,
           );
           if (hasImport) return;
           const importDecl = t.importDeclaration(
             [t.importSpecifier(t.identifier("__lit"), t.identifier("__lit"))],
-            t.stringLiteral("@handlemotion/literature-client/lit"),
+            t.stringLiteral(LIT_IMPORT_SOURCE),
           );
           programPath.unshiftContainer("body", importDecl);
         },

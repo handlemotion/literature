@@ -1,0 +1,88 @@
+{
+  "name": "@handlemotion/literature",
+  "version": "0.1.0",
+  "description": "Literature dev-only copywriting for React",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/handleui/literature.git",
+    "directory": "packages/literature"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/index.js",
+    "./dist/devtools.js"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./devtools": {
+      "types": "./dist/devtools.d.ts",
+      "import": "./dist/devtools.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./dist/vite.js"
+    },
+    "./lit": {
+      "types": "./dist/lit.d.ts",
+      "import": "./dist/lit.js"
+    },
+    "./literature-loader.cjs": {
+      "require": "./dist/literature-loader.cjs"
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": false,
+    "registry": "https://registry.npmjs.org"
+  },
+  "scripts": {
+    "build": "tsup && cp src/vite.d.ts dist/vite.d.ts && node scripts/verify-dist.mjs",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-typescript": "^7.28.0",
+    "lucide-react": "^0.547.0",
+    "recast": "^0.23.9",
+    "unplugin": "^2.3.5"
+  },
+  "devDependencies": {
+    "@handlemotion/literature-typescript-config": "workspace:*",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "next": "16.2.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsup": "^8.5.0",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "next": ">=14",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0",
+    "vite": ">=5"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

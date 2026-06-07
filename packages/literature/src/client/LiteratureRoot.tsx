@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { LiteratureManifest, TextTarget } from "@handlemotion/literature-core";
+import type { LiteratureManifest, TextTarget } from "../core/index.js";
 import { patchText, undoPatch } from "./api.js";
 import { enableEditMode, setLiteratureActiveTarget } from "./editMode.js";
 import { Panel } from "./Panel.js";
@@ -10,7 +10,6 @@ import { Pill, type PillMode } from "./Pill.js";
 
 export function LiteratureRoot() {
   const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(true);
   const [mode, setMode] = useState<PillMode>("off");
   const [selected, setSelected] = useState<TextTarget | null>(null);
   const [draft, setDraft] = useState("");
@@ -132,7 +131,7 @@ export function LiteratureRoot() {
     return () => stopEditModeRef.current?.();
   }, []);
 
-  if (!mounted || !visible) return null;
+  if (!mounted) return null;
 
   const editActive = mode === "edit" || mode === "editing";
 

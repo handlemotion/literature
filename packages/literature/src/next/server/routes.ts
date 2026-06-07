@@ -1,7 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import path from "node:path";
-import { applyPatch, readHistory, undoPatch, type LiteratureManifest } from "@handlemotion/literature-core";
-import { getManifest } from "@handlemotion/literature-compiler";
+import { applyPatch, readHistory, undoPatch, type LiteratureManifest } from "../../core/index.js";
+import { getManifest } from "../../compiler/index.js";
 
 export interface ServerContext {
   projectRoot: string;
