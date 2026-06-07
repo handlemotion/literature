@@ -30,7 +30,7 @@
       "env": { "node": true, "browser": false }
     },
     {
-      "files": ["packages/literature/src/client/**", "packages/ui/**"],
+      "files": ["packages/literature/src/client/**"],
       "env": { "browser": true, "node": false }
     }
   ]

@@ -23,9 +23,6 @@ importers:
 
   apps/demo:
     dependencies:
-      '@handlemotion/literature-ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
       next:
         specifier: 16.2.0
         version: 16.2.0(@babel/core@7.29.7)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -39,9 +36,6 @@ importers:
       '@handlemotion/literature':
         specifier: workspace:*
         version: link:../../packages/literature
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
@@ -66,9 +60,6 @@ importers:
 
   packages/cli:
     devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.3
@@ -100,9 +91,6 @@ importers:
         specifier: '>=5'
         version: 7.3.3(@types/node@22.15.3)
     devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/babel__core':
         specifier: ^7.20.5
         version: 7.20.5
@@ -127,33 +115,6 @@ importers:
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(postcss@8.5.15)(typescript@5.9.2)
-      typescript:
-        specifier: 5.9.2
-        version: 5.9.2
-
-  packages/typescript-config: {}
-
-  packages/ui:
-    dependencies:
-      react:
-        specifier: ^19.2.0
-        version: 19.2.0
-      react-dom:
-        specifier: ^19.2.0
-        version: 19.2.0(react@19.2.0)
-    devDependencies:
-      '@handlemotion/literature-typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
-      '@types/node':
-        specifier: ^22.15.3
-        version: 22.15.3
-      '@types/react':
-        specifier: 19.2.2
-        version: 19.2.2
-      '@types/react-dom':
-        specifier: 19.2.2
-        version: 19.2.2(@types/react@19.2.2)
       typescript:
         specifier: 5.9.2
         version: 5.9.2

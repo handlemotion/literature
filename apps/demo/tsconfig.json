@@ -1,11 +1,6 @@
 {
-  "extends": "@handlemotion/literature-typescript-config/nextjs.json",
+  "extends": "../../tsconfig.next.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "strictNullChecks": true
   },
   "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js", ".next/types/**/*.ts"],

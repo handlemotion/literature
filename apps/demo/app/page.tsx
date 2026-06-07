@@ -1,4 +1,3 @@
-import { Button } from "@handlemotion/literature-ui/button";
 import styles from "./page.module.css";
 
 export default function Home() {
@@ -10,9 +9,9 @@ export default function Home() {
           Dev-only copywriting for React — select visible UI text in the canvas, edit in place, and
           apply changes back to source files.
         </p>
-        <Button appName="literature" className={styles.secondary}>
+        <button type="button" className={styles.secondary}>
           Scaffold ready
-        </Button>
+        </button>
       </main>
     </div>
   );

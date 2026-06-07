@@ -1,6 +1,6 @@
 {
   "name": "@handlemotion/literature-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI to install Literature in your project",
   "license": "MIT",
   "repository": {
@@ -9,7 +9,7 @@
     "directory": "packages/cli"
   },
   "bin": {
-    "literature": "./dist/cli.js"
+    "literature": "dist/cli.js"
   },
   "files": [
     "dist"
@@ -26,7 +26,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@handlemotion/literature-typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "tsup": "^8.5.0",
     "typescript": "5.9.2"
