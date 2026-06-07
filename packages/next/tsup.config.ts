@@ -6,5 +6,5 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: "node18",
-  external: ["next"],
+  external: ["next", "react", "react-dom", "react/jsx-runtime"],
 });
