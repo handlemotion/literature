@@ -4,10 +4,10 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "oxlint .",
-    "lint:fix": "oxlint --fix .",
-    "format": "oxfmt --check .",
-    "format:fix": "oxfmt .",
+    "lint": "oxlint packages && pnpm --filter demo lint",
+    "lint:fix": "oxlint --fix packages && pnpm --filter demo lint:fix",
+    "format": "oxfmt --check packages && pnpm --filter demo format",
+    "format:fix": "oxfmt packages && pnpm --filter demo format:fix",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {

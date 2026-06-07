@@ -22,11 +22,15 @@
   ],
   "overrides": [
     {
-      "files": ["packages/core/**", "packages/compiler/**", "packages/next/**"],
+      "files": [
+        "packages/literature/src/core/**",
+        "packages/literature/src/compiler/**",
+        "packages/literature/src/next/**"
+      ],
       "env": { "node": true, "browser": false }
     },
     {
-      "files": ["packages/client/**", "packages/ui/**", "apps/**"],
+      "files": ["packages/literature/src/client/**", "packages/ui/**"],
       "env": { "browser": true, "node": false }
     }
   ]
