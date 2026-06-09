@@ -15,7 +15,6 @@ export interface InitOptions {
   force: boolean;
   framework?: "next" | "vite";
   packageManager?: PackageManager;
-  appDir?: string;
   skipInstall: boolean;
   dryRun?: boolean;
 }
@@ -52,11 +51,12 @@ export async function runInit(options: InitOptions): Promise<void> {
   const cwd = path.resolve(options.cwd);
 
   if (!existsSync(path.join(cwd, "package.json"))) {
-    throw new Error("No package.json found. Run this command from your project root.");
+    throw new Error(
+      "No package.json found. Run this command from your app directory (where package.json and next.config or vite.config live).",
+    );
   }
 
-  const target = await resolveAppTarget(cwd, {
-    appDir: options.appDir,
+  const target = resolveAppTarget(cwd, {
     framework: options.framework,
   });
 
@@ -66,8 +66,8 @@ export async function runInit(options: InitOptions): Promise<void> {
     );
   }
 
-  const pm = options.packageManager ?? detectPackageManager(cwd);
-  const patchOpts = { force: options.force, dryRun: options.dryRun, root: cwd };
+  const pm = options.packageManager ?? detectPackageManager(target.installCwd);
+  const patchOpts = { force: options.force, dryRun: options.dryRun, root: target.installCwd };
   const shouldPreviewInstall = options.dryRun && !options.skipInstall;
   const shouldRunInstall = !options.dryRun && !options.skipInstall;
 
@@ -80,12 +80,8 @@ export async function runInit(options: InitOptions): Promise<void> {
 
   const patchedFiles =
     target.frameworkInfo.framework === "next"
-      ? patchNextProject(cwd, target.frameworkInfo, {
-          appDir: target.relPath,
-          appRoot: target.appRoot,
-          ...patchOpts,
-        }).files
-      : patchViteProject(target.appRoot, patchOpts).files;
+      ? patchNextProject(target.installCwd, target.frameworkInfo, patchOpts).files
+      : patchViteProject(target.installCwd, patchOpts).files;
 
   if (options.dryRun) {
     console.log("\nDry run — no changes made.");
@@ -100,7 +96,7 @@ export async function runInit(options: InitOptions): Promise<void> {
   if (patchedFiles.length > 0) {
     console.log(label);
     for (const file of patchedFiles) {
-      console.log(`  - ${path.relative(cwd, file)}`);
+      console.log(`  - ${path.relative(target.installCwd, file)}`);
     }
   } else {
     console.log(emptyMsg);

@@ -7,8 +7,8 @@ import { describe, it } from "node:test";
 import { patchViteProject } from "./vite.js";
 
 const viteFixture = fileURLToPath(new URL("../../fixtures/vite-minimal/", import.meta.url));
-const viteAppDirFixture = fileURLToPath(
-  new URL("../../fixtures/vite-app-dir/apps/web/", import.meta.url),
+const viteNestedFixture = fileURLToPath(
+  new URL("../../fixtures/vite-nested-app/apps/web/", import.meta.url),
 );
 
 describe("patchViteProject dry-run", () => {
@@ -29,7 +29,7 @@ describe("patchViteProject dry-run", () => {
 
   it("patches vite.config inside app directory", async () => {
     const dir = await mkdtemp(join(tmpdir(), "lit-vite-app-"));
-    await cp(viteAppDirFixture, dir, { recursive: true });
+    await cp(viteNestedFixture, dir, { recursive: true });
     const configPath = join(dir, "vite.config.ts");
 
     const { files } = patchViteProject(dir, { force: false, dryRun: true });

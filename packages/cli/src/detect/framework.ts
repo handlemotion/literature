@@ -14,6 +14,17 @@ const VITE_CONFIG_FILES = [
   "vite.config.cjs",
 ] as const;
 
+function hasWorkspacePackages(workspaces: unknown): boolean {
+  if (Array.isArray(workspaces)) {
+    return workspaces.length > 0;
+  }
+  if (workspaces && typeof workspaces === "object" && "packages" in workspaces) {
+    const packages = (workspaces as { packages?: unknown }).packages;
+    return Array.isArray(packages) && packages.length > 0;
+  }
+  return false;
+}
+
 export function isMonorepoRoot(cwd: string): boolean {
   const workspaceFile = path.join(cwd, "pnpm-workspace.yaml");
   if (existsSync(workspaceFile)) {
@@ -22,6 +33,19 @@ export function isMonorepoRoot(cwd: string): boolean {
       return true;
     }
   }
+
+  const pkgPath = path.join(cwd, "package.json");
+  if (existsSync(pkgPath)) {
+    try {
+      const pkg = JSON.parse(readFileSync(pkgPath, "utf-8")) as { workspaces?: unknown };
+      if (hasWorkspacePackages(pkg.workspaces)) {
+        return true;
+      }
+    } catch {
+      // ignore invalid package.json
+    }
+  }
+
   return (
     existsSync(path.join(cwd, "turbo.json")) &&
     (existsSync(path.join(cwd, "packages")) || existsSync(path.join(cwd, "apps")))
@@ -33,9 +57,7 @@ export type NextRouter = "app" | "pages";
 
 export interface FrameworkInfo {
   framework: Framework;
-  nextRouter?: NextRouter;
   appDir: string;
-  isMonorepo: boolean;
 }
 
 function findConfigFile(cwd: string, files: readonly string[]): string | null {
@@ -63,36 +85,28 @@ export function detectNextRouter(searchDir: string): NextRouter {
   return "app";
 }
 
-function resolveNextAppDir(cwd: string): { nextRouter: NextRouter; appDir: string } {
-  if (existsSync(path.join(cwd, "app"))) {
-    return { nextRouter: "app", appDir: cwd };
+function resolveNextAppDir(cwd: string): string {
+  if (
+    existsSync(path.join(cwd, "app")) ||
+    existsSync(path.join(cwd, "src", "app")) ||
+    existsSync(path.join(cwd, "pages")) ||
+    existsSync(path.join(cwd, "src", "pages"))
+  ) {
+    if (existsSync(path.join(cwd, "src", "app")) || existsSync(path.join(cwd, "src", "pages"))) {
+      return path.join(cwd, "src");
+    }
+    return cwd;
   }
-  if (existsSync(path.join(cwd, "src", "app"))) {
-    return { nextRouter: "app", appDir: path.join(cwd, "src") };
-  }
-  if (existsSync(path.join(cwd, "pages"))) {
-    return { nextRouter: "pages", appDir: cwd };
-  }
-  if (existsSync(path.join(cwd, "src", "pages"))) {
-    return { nextRouter: "pages", appDir: path.join(cwd, "src") };
-  }
-  return { nextRouter: "app", appDir: cwd };
+  return cwd;
 }
 
-export function detectFramework(
-  cwd: string,
-  override?: Framework,
-  monorepoRoot: string = cwd,
-): FrameworkInfo | null {
-  const isMonorepo = isMonorepoRoot(monorepoRoot);
-
+export function detectFramework(cwd: string, override?: Framework): FrameworkInfo | null {
   if (override === "next" || (!override && hasConfig(cwd, NEXT_CONFIG_FILES))) {
-    const { nextRouter, appDir } = resolveNextAppDir(cwd);
-    return { framework: "next", nextRouter, appDir, isMonorepo };
+    return { framework: "next", appDir: resolveNextAppDir(cwd) };
   }
 
   if (override === "vite" || (!override && hasConfig(cwd, VITE_CONFIG_FILES))) {
-    return { framework: "vite", appDir: cwd, isMonorepo };
+    return { framework: "vite", appDir: cwd };
   }
 
   return null;

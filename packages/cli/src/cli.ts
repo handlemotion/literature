@@ -11,7 +11,6 @@ const { values, positionals } = parseArgs({
     force: { type: "boolean" },
     framework: { type: "string", short: "f" },
     "package-manager": { type: "string", short: "p" },
-    "app-dir": { type: "string" },
     "skip-install": { type: "boolean" },
     "dry-run": { type: "boolean" },
     cwd: { type: "string", short: "c" },
@@ -24,21 +23,23 @@ function printHelp(): void {
 Usage:
   literature init [options]
 
+Run from the app package (where next.config or vite.config lives).
+From a monorepo root, the CLI lists apps under apps/* and packages/* and exits.
+
 Options:
   -y, --yes                Non-interactive (default)
   --force                  Re-apply Literature config when already wrapped
   -f, --framework <next|vite>  Framework override
   -p, --package-manager <pm>   npm | pnpm | yarn | bun
-  --app-dir <path>         App directory in monorepos (relative to cwd)
   --skip-install           Patch files only, skip package install
   --dry-run                Preview install and patches without making changes
   -c, --cwd <path>         Working directory (default: process.cwd())
   -h, --help               Show help
 
 Examples:
+  cd apps/web && literature init
   literature init --dry-run
   literature init --dry-run --skip-install
-  literature init --dry-run -f next --app-dir apps/demo
 `);
 }
 
@@ -77,7 +78,6 @@ async function main(): Promise<void> {
       force: values.force ?? false,
       framework,
       packageManager: pm,
-      appDir: values["app-dir"],
       skipInstall: values["skip-install"] ?? false,
       dryRun: values["dry-run"] ?? false,
     });
