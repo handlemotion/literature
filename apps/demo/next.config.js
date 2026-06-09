@@ -1,21 +1,14 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { withLiterature } from "@handlemotion/literature";
 
-const monorepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), "../..");
-
-/** @type {import('next').NextConfig} */
-const nextConfig = withLiterature(
+export default withLiterature(
   {
-    allowedDevOrigins: ["localhost", "127.0.0.1", "*.localhost", "literature.localhost", "*.literature.localhost"],
-    turbopack: {
-      root: monorepoRoot,
-    },
+    allowedDevOrigins: [
+      "localhost",
+      "127.0.0.1",
+      "*.localhost",
+      "literature.localhost",
+      "*.literature.localhost",
+    ],
   },
-  {
-    projectRoot: monorepoRoot,
-    appRoot: path.join(path.dirname(fileURLToPath(import.meta.url))),
-  },
+  { projectRoot: process.cwd() },
 );
-
-export default nextConfig;
