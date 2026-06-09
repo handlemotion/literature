@@ -1,67 +1,55 @@
 # AGENTS.md
 
-## Cursor Cloud specific instructions
+Instructions for Cursor Cloud and coding agents working in this monorepo.
 
-### Product overview
+**Install, manual setup, and dev commands:** [README.md](README.md)
 
-Literature is a **pnpm + Turborepo monorepo** for dev-only React copywriting. The only runnable app is `apps/demo` (Next.js 16 dogfood). There is no database, Docker, or external services. In dev, `withLiterature()` starts an embedded patch server proxied at `/__literature/*`.
+## Overview
 
-See [README.md](README.md) for standard install/build/dev commands.
+Dev-only React copywriting. Runnable app: `apps/demo` (Next.js 16). No database, Docker, or external services. In dev, `withLiterature()` embeds a patch server proxied at `/__literature/*`.
 
-### Services
+SDK sources: `packages/literature/src/{core,compiler,client,next}`. Mount devtools with `<Literature />` from `@handlemotion/literature/devtools`.
+
+## Services
 
 | Service | Command | URL |
 |---------|---------|-----|
-| Next.js dev (dogfood app) | `pnpm --filter demo dev:app` | http://localhost:3000 |
-| Next.js dev (portless hostname) | `pnpm dev` from repo root | https://literature.localhost |
-| Literature patch server | Auto-started in dev | http://localhost:3000/__literature/health |
+| Next.js dev (dogfood) | `pnpm --filter demo dev:app` | http://localhost:3000 |
+| Next.js dev (portless) | `pnpm dev` from repo root | https://literature.localhost |
+| Patch server | Auto-started in dev | `…/__literature/health` on the app origin |
 
-### First-time / after clone
+Without portless, use `pnpm --filter demo dev:app`. The demo config allows `*.localhost` origins (including `literature.localhost` via portless).
 
-Library packages are consumed from `dist/`. Turbo `dev` depends on `^build`, so run a build before the first dev session:
+## Verify changes
 
-```sh
-pnpm install
-pnpm turbo build --filter=demo...
-```
+- **Types:** `pnpm turbo check-types --filter=demo...`
+- **Tests:** `pnpm test` (CLI `node:test` via Turbo)
+- **UI:** No app-level automated tests — dogfood in dev mode (**Alt+Shift+L** toggles edit mode)
+- **`literature init`:** Run from `apps/demo` (or `-c apps/demo`), not the repo root — root lists apps and exits
 
-Published packages: `@handlemotion/literature` (SDK) and `@handlemotion/literature-cli` (`literature init`). SDK sources live under `packages/literature/src/{core,compiler,client,next}`. Mount devtools with `<Literature />` from `@handlemotion/literature/devtools` in the root layout. Build with `pnpm turbo build --filter=demo...`.
+## Releasing
 
-### Cloud VM / localhost dev
+Published: `@handlemotion/literature` (SDK) and `@handlemotion/literature-cli` (`literature init`). CI publishes via [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC, no `NPM_TOKEN`).
 
-When not using portless, run `pnpm --filter demo dev:app` on port 3000. The demo config sets `allowedDevOrigins` for `*.localhost` (including `literature.localhost` via portless).
+**One-time npm setup:** [docs/PUBLISHING.md](docs/PUBLISHING.md)
 
-### Lint / types / tests
+**Never** run `pnpm release`, `pnpm publish`, or `changeset publish` unless explicitly asked to debug CI.
 
-- **Lint:** `pnpm lint` (oxlint + oxfmt; packages at repo root, demo via `apps/demo`).
-- **Types:** `pnpm turbo check-types --filter=demo...` for the app stack.
-- **Tests:** `pnpm test` (CLI `node:test` via Turbo). No app-level automated tests; verify SDK/UI manually via the dogfood app in dev mode (Alt+Shift+L toggles edit mode).
-
-### Local artifacts (gitignored)
-
-- `.literature/history.jsonl` — edit history
-- `.literature/port` — patch server port
-- `.literature/token` — dev-only patch API token
-
-### Releasing (Changesets + OIDC)
-
-Published packages: `@handlemotion/literature` (SDK) and `@handlemotion/literature-cli` (`literature init`). **Do not publish manually** — CI publishes via [npm trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC, no `NPM_TOKEN`). See [docs/PUBLISHING.md](docs/PUBLISHING.md) for one-time npm setup only.
-
-#### When you need a changeset
+### When you need a changeset
 
 | Touched | Changeset? |
 |---------|------------|
 | `packages/literature` or `packages/cli` (user-visible) | Yes — `pnpm changeset` |
 | `apps/demo`, docs, tests, CI, refactors with no release impact | `pnpm changeset --empty` |
-| Unsure | Ask: would someone upgrading from npm care? If yes, changeset. |
+| Unsure | Would someone upgrading from npm care? If yes, changeset. |
 
-#### Writing the summary
+### Writing the summary
 
-The summary becomes the public changelog. Write for **people using Literature in their app**, not for repo maintainers.
+The summary becomes the public changelog. Write for **people using Literature in their app**, not repo maintainers.
 
 - **Lead with the outcome** — what works differently after they upgrade.
-- **Use plain language** — no file paths, PR numbers, or internal module names.
-- **Keep it short** — one sentence is fine; use a second line only for a distinct second user-facing change.
+- **Plain language** — no file paths, PR numbers, or internal module names.
+- **Keep it short** — one sentence is fine; a second line only for a distinct second change.
 - **Match semver honestly:**
   - **patch** — bug fix, small behavior fix, no API change
   - **minor** — new capability, backwards-compatible API addition
@@ -81,10 +69,8 @@ Bad:
 
 Pick `@handlemotion/literature`, `@handlemotion/literature-cli`, or **both** when the user-visible change spans SDK and installer.
 
-#### PR flow
+### PR flow
 
-1. **Your PR** — include a `.changeset/*.md` file (from `pnpm changeset` or `--empty`). Same PR as the code change.
-2. **Merge to `main`** — if unreleased changesets exist, [`publish.yml`](.github/workflows/publish.yml) opens a **Version Packages** PR (version bumps + `CHANGELOG.md` updates).
-3. **Merge Version Packages** — CI builds and publishes to npm via OIDC. Done.
-
-Agents: never run `pnpm release`, `pnpm publish`, or `changeset publish` unless explicitly asked to debug CI. Versioning and publish are CI-only.
+1. **Your PR** — include a `.changeset/*.md` file (`pnpm changeset` or `--empty`), same PR as the code.
+2. **Merge to `main`** — if unreleased changesets exist, [`publish.yml`](.github/workflows/publish.yml) opens a **Version Packages** PR.
+3. **Merge Version Packages** — CI builds and publishes both packages via OIDC.

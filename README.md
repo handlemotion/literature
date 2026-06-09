@@ -1,26 +1,21 @@
 # Literature
 
-Dev-only copywriting for React — enter edit mode to highlight instrumented copy on the canvas, click a string to edit, and apply changes back to source files.
+Dev-only copywriting for React. Toggle edit mode, click instrumented copy on the canvas, edit in the panel, and **Apply** writes back to source.
 
-## Install (consumer app)
+## Quick start
 
 ```sh
+cd your-app   # or apps/your-app / packages/your-app in a monorepo
 npx @handlemotion/literature-cli init -y
 ```
 
-In a turborepo, run from the repo root — the CLI auto-detects apps under `apps/*` and `packages/*`. Start your dev server, then press **Alt+Shift+L** (or the pencil pill) to toggle edit mode.
+Run `literature init` from your app directory (where `next.config` or `vite.config` lives). From a monorepo root, the CLI lists compatible apps under `apps/*` and `packages/*` and exits.
 
-### CLI options
+Start your dev server, then **Alt+Shift+L** (or the pencil pill) to edit copy on the canvas.
 
-```sh
-npx @handlemotion/literature-cli init -y -f next              # Next.js override
-npx @handlemotion/literature-cli init -y -f vite               # Vite override
-npx @handlemotion/literature-cli init -y -p pnpm              # package manager override
-npx @handlemotion/literature-cli init -y --app-dir apps/demo   # pick a specific app
-npx @handlemotion/literature-cli init --dry-run                # preview changes only
-```
+## Manual setup
 
-## Manual install (Next.js)
+### Next.js
 
 ```sh
 pnpm add -D @handlemotion/literature
@@ -35,6 +30,8 @@ export default withLiterature(
   { projectRoot: process.cwd() },
 );
 ```
+
+If Next.js 16 Turbopack fails to resolve packages in a monorepo, set `turbopack: { root: … }` in your own `next.config` per the [Next.js docs](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack) — Literature does not inject this.
 
 ```tsx
 // app/layout.tsx
@@ -52,49 +49,29 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-For Vite, use `createLiteraturePlugin.vite({ projectRoot })` from `@handlemotion/literature/vite`.
+### Vite
 
-Types for integrators: `@handlemotion/literature/types`.
+Use `createLiteraturePlugin.vite({ projectRoot })` from `@handlemotion/literature/vite`.
 
-Compiler-injected copy wrappers use `__lit` from `@handlemotion/literature/lit` (do not import manually).
-
-## What's inside (monorepo)
-
-- `apps/demo` — Next.js dogfood app
-- `packages/literature` — published SDK (`@handlemotion/literature`; sources in `src/{core,compiler,client,next}`)
-- `packages/cli` — published CLI (`@handlemotion/literature-cli`)
-
-Lint/format: **oxlint** + **oxfmt** — `pnpm lint` / `pnpm format` from the repo root; `apps/demo` also has its own scripts and config.
-
-## Develop
+## Develop (this repo)
 
 ```sh
 pnpm install
 pnpm turbo build --filter=demo...
-pnpm dev           # https://literature.localhost
-pnpm lint
-pnpm format:fix
+pnpm dev
 ```
 
-## Local artifacts
+## Limits
 
-Gitignored per project:
+- Dynamic JSX, i18n, non-literal props — not supported in v1
+- Don't share **Alt+Shift+L** with React Grab or other DOM inspectors
+- Vite: instrumentation only (no patch server in v1)
 
-- `.literature/history.jsonl` — edit history
-- `.literature/port` — patch server port
-- `.literature/token` — dev-only patch API token
+## Uninstall
 
-## Unsupported in v1
+Remove `@handlemotion/literature`, `<Literature />`, and `.literature/` if present.
 
-- Dynamic JSX expressions, i18n, non-literal props
-- Do not run alongside React Grab on the same shortcut
-- Vite: JSX instrumentation only (no patch server in v1)
+## Maintainers
 
-## Remove
-
-1. Remove `@handlemotion/literature` and `<Literature />` from the app
-2. Delete `.literature/` if present
-
-## Publish
-
-Two npm packages: `@handlemotion/literature` and `@handlemotion/literature-cli`. See [docs/PUBLISHING.md](docs/PUBLISHING.md).
+- [AGENTS.md](AGENTS.md) — agent conventions and changeset writing
+- [docs/PUBLISHING.md](docs/PUBLISHING.md) — npm trusted publishing
