@@ -1,6 +1,7 @@
 import path from "node:path";
 import { createRequire } from "node:module";
 import { createLiteraturePlugin } from "../compiler/index.js";
+import { resolveAppRoot } from "../compiler/paths.js";
 import { startLiteratureServer, waitForLiteratureServer } from "./server/start.js";
 
 const require = createRequire(import.meta.url);
@@ -48,11 +49,11 @@ async function mergeRewrites(
 
 export function withLiterature(
   nextConfig: NextConfig = {},
-  options: { projectRoot?: string; appRoot?: string } = {},
+  options: { projectRoot?: string } = {},
 ): NextConfig {
   const isDev = process.env.NODE_ENV === "development";
   const projectRoot = path.resolve(options.projectRoot ?? process.cwd());
-  const appRoot = path.resolve(options.appRoot ?? process.cwd());
+  const appRoot = resolveAppRoot(projectRoot);
 
   if (isDev) {
     startLiteratureServer(projectRoot);
@@ -61,22 +62,8 @@ export function withLiterature(
   const loaderPath = require.resolve("@handlemotion/literature/literature-loader.cjs");
   const userWebpack = nextConfig.webpack;
   const userRewrites = nextConfig.rewrites;
-  const turbopackRoot = path.resolve(
-    (nextConfig.turbopack as { root?: string } | undefined)?.root ?? projectRoot,
-  );
-  const appPrefix = path.relative(turbopackRoot, appRoot).replace(/\\/g, "/");
-  const scopedGlob = (ext: string) =>
-    turbopackRoot !== appRoot && appPrefix ? `${appPrefix}/**/*.${ext}` : `**/*.${ext}`;
-  const literatureGlobs = (ext: string) => {
-    const primary = scopedGlob(ext);
-    // Monorepo layouts differ between turbopack root and the Next app dir — register both.
-    if (primary !== `**/*.${ext}`) {
-      return [primary, `**/*.${ext}`];
-    }
-    return [primary];
-  };
   const literatureLoaderRule = {
-    loaders: [{ loader: loaderPath, options: { appRoot, projectRoot: turbopackRoot } }],
+    loaders: [{ loader: loaderPath, options: { appRoot, projectRoot } }],
     as: "*.tsx",
   };
 
@@ -100,7 +87,7 @@ export function withLiterature(
       const cfg = (userWebpack?.(config, context) ?? config) as { plugins?: unknown[] };
       if (isDev && ctx.dev) {
         cfg.plugins = cfg.plugins ?? [];
-        const webpackPlugins = createLiteraturePlugin.webpack({ projectRoot, appRoot });
+        const webpackPlugins = createLiteraturePlugin.webpack({ projectRoot });
         cfg.plugins.push(...(Array.isArray(webpackPlugins) ? webpackPlugins : [webpackPlugins]));
       }
       return cfg;
@@ -111,12 +98,8 @@ export function withLiterature(
         ? {
             rules: {
               ...(nextConfig.turbopack as { rules?: Record<string, unknown> })?.rules,
-              ...Object.fromEntries(
-                [...literatureGlobs("tsx"), ...literatureGlobs("jsx")].map((glob) => [
-                  glob,
-                  literatureLoaderRule,
-                ]),
-              ),
+              "**/*.tsx": literatureLoaderRule,
+              "**/*.jsx": literatureLoaderRule,
             },
           }
         : {}),

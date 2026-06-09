@@ -108,6 +108,10 @@ export async function handleRequest(
     }
 
     if (method === "POST" && url.pathname === "/manifest/register") {
+      if (!isAuthorized(req, ctx)) {
+        sendJson(res, 403, { ok: false, message: "Unauthorized" });
+        return;
+      }
       const body = await parseJsonBody<{ targets?: LiteratureManifest["targets"] }>(req, res);
       if (!body) {
         return;

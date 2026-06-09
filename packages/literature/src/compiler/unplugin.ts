@@ -3,6 +3,7 @@ import { createUnplugin } from "unplugin";
 import { transformLiteratureSource } from "./babel-transform.js";
 import { MANIFEST_MODULE, MANIFEST_RESOLVED } from "./constants.js";
 import { getManifestSnapshot, mergeTargets, resetManifestState, setManifestProjectRoot } from "./manifest-state.js";
+import { isUnderDir, resolveAppRoot } from "./paths.js";
 import { registerManifestTargets } from "./register-manifest.js";
 import { shouldSkipLiteratureTransform } from "./skip.js";
 
@@ -10,19 +11,10 @@ function isTransformable(id: string): boolean {
   return /\.(tsx|jsx)$/.test(id) && !id.includes("node_modules");
 }
 
-function isUnderDir(file: string, root: string): boolean {
-  const rel = path.relative(root, file);
-  return Boolean(rel) && !rel.startsWith("..") && !path.isAbsolute(rel);
-}
-
-export const createLiteraturePlugin = createUnplugin<{
-  projectRoot?: string;
-  /** Only transform sources under this directory (defaults to projectRoot). */
-  appRoot?: string;
-}>((options) => {
+export const createLiteraturePlugin = createUnplugin<{ projectRoot?: string }>((options) => {
   const isDev = process.env.NODE_ENV === "development";
-  const appRoot = path.resolve(options.appRoot ?? options.projectRoot ?? process.cwd());
-  const projectRoot = path.resolve(options.projectRoot ?? appRoot);
+  const projectRoot = path.resolve(options.projectRoot ?? process.cwd());
+  const appRoot = resolveAppRoot(projectRoot);
 
   return {
     name: "literature",
@@ -47,7 +39,7 @@ export const createLiteraturePlugin = createUnplugin<{
       return isTransformable(id) && isUnderDir(id, appRoot) && !shouldSkipLiteratureTransform(id);
     },
     transform(code, id) {
-      const relFile = relativize(id, options.projectRoot ?? process.cwd());
+      const relFile = relativize(id, projectRoot);
       if (!relFile) {
         return null;
       }
